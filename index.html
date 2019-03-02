@@ -1,0 +1,63 @@
+<head>
+<script src="https://d3js.org/d3.v5.min.js"></script>
+</head>
+
+<body>
+    <style>
+    .center {
+        text-align: center
+    }
+    </style>
+
+
+
+    <h2 class="center">Graudate Admissions</h2>
+
+    <script>
+    const requestData = async () => {
+        let universityData = await d3.csv("Datasets/Admission_Predict_Ver2.csv");
+        const WIDTH = 800;
+        const HEIGHT = 800;
+
+         
+        // Don't really have to do much processing
+        universityData.forEach((d) => {
+            (Object.keys(d)).forEach((field) => {
+                d[field] = Number(d[field])
+            });
+        });
+
+        const TOEFLmin = d3.min(universityData, d => d['TOEFL Score']);
+        const TOEFLmax = d3.max(universityData, d => d['TOEFL Score']);
+        const GREmin = d3.min(universityData, d => d['GRE Score']);
+        const GREmax = d3.max(universityData, d => d['GRE Score']);
+        console.log(universityData);
+        console.log(TOEFLmin, TOEFLmax);
+
+        // Set up svgs...we could add a third one?
+        testScores = d3.select('body').append("svg")
+            .attr("width",WIDTH)
+            .attr("height",HEIGHT)
+            .attr("id","svgTestScores");
+        
+        admissionChance = d3.select('body').append("svg")
+            .attr("width",WIDTH)
+            .attr("height",HEIGHT)
+            .attr("id","svgAdmissions");
+
+        // axes
+        let xvals = d3.scaleLinear()
+            .domain([TOEFLmin-5,TOEFLmax+5])
+            .range([20,WIDTH-20])
+        
+        let yvals = d3.scaleLinear()
+            .domain([GREmin-10,GREmax+10])
+            .range([height-15,5])
+        
+
+    }
+
+    {{/* columns: (9) ["Serial No.", "GRE Score", "TOEFL Score", "University Rating", "SOP", "LOR ", "CGPA", "Research", "Chance of Admit "] */}}
+    requestData();
+    </script>
+</body>
