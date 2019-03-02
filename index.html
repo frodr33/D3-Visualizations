@@ -1,5 +1,10 @@
 <head>
-  <script src="https://d3js.org/d3.v5.min.js"></script>
+    <script src="https://unpkg.com/d3-array@1"></script>
+    <script src="https://unpkg.com/d3-collection@1"></script>
+    <script src="https://unpkg.com/d3-path@1"></script>
+    <script src="https://unpkg.com/d3-shape@1"></script>
+    <script src="https://unpkg.com/d3-sankey@0"></script>
+    <script src="https://d3js.org/d3.v5.min.js"></script>
 </head>
 
 <body>
@@ -65,7 +70,7 @@
         .attr("height", HEIGHT)
         .attr("id", "svgTestScores");
 
-      admissionChance = d3.select('body').append("svg")
+      admissionChance = d3.select('div#vis2').append("svg")
         .attr("width", WIDTH)
         .attr("height", HEIGHT)
         .attr("id", "svgAdmissions");
@@ -113,7 +118,79 @@
           .style("fill", "blue") // change this too
           .attr("opacity", 0.3)
       });
+
+
+      //////////////////////////////////////// 
+      /////////////    svg2    /////////////// 
+      //////////////////////////////////////// 
+
+      var cornellData = await d3.csv("datasets/cornellAdmissions.csv");
+
+      cornellData.forEach((d) => {
+          if (d["Rejected"] != "Rejected" && d["Rejected"] != "Accepted"){
+              d["Rejected"] = "Rejected" 
+          }
+      });
+
+
+      const nodeNames = ["Cornell", "High GPA", "Average GPA", "Low GPA", "Accepted", "Rejected"];
+      let indexMapping = new Map(nodeNames.map((d,i) => [d,i]));
+      {{/* console.log("here")
+      console.log(indexMapping); */}}
+      let nodes = [];
+      nodeNames.forEach((nodeName) => {
+          nodes.push({name:nodeName});
+      })
+
+      // First add connections between cornell and rejected
+      let links = [];
+      cornellData.forEach((d) => {
+          links.push({
+              source: indexMapping.get("Cornell"),
+              target: indexMapping.get(d["Rejected"]),
+              value: 25
+          });
+      });
+    
+      const sankey = d3.sankey()
+        .nodeWidth(15)
+        .nodePadding(10)
+        .extent([[1, 1], [600 - 1, 800 - 5]]);
+    
+      graph = sankey({nodes, links})
+      {{/* admissionChance.append("g")
+        .attr("stroke","#000")
+        .selectAll("rect")
+        .data(graph.nodes)
+        .join("rect")
+        .attr("x", d => d.x0)
+        .attr("y", d => d,y0)
+        .attr("height", d => d.y1 - d.y0)
+        .attr("width", d => d.x1 - d.x0)
+        .append("title")
+            .text(d => ) */}}
+      
+      
+
+
+
+
+      {{/* var link = admissionChance.append("g").selectAll(".link")
+        .data(links)
+        .enter().append("path")
+        .attr("class","link")
+        .attr("d",path)
+        .style("stroke-width", 1)
+
+
+      var node = admissionChance.append("g").selectAll(".node")
+        .data(nodes)
+        .enter().append("g")
+        .attr("class","node")
+        .attr("transform", (d) => {
+            return "translate(" + d.x + "," + d.y + ")";}) */}}
     }
+
     { {/* columns: (9) ["Serial No.", "GRE Score", "TOEFL Score", "University Rating", "SOP", "LOR ", "CGPA", "Research", "Chance of Admit "] */ } }
     requestData();
   </script>
