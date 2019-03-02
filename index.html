@@ -7,6 +7,16 @@
     .center {
         text-align: center
     }
+
+    {{/* .line {
+        stroke: gray;
+    } */}}
+    .gridlines line {
+      stroke: gray;
+    }
+    .gridlines .domain {
+      stroke: none;
+    }
     </style>
 
 
@@ -17,7 +27,7 @@
     const requestData = async () => {
         let universityData = await d3.csv("Datasets/Admission_Predict_Ver2.csv");
         const WIDTH = 800;
-        const HEIGHT = 800;
+        const HEIGHT = 600;
 
          
         // Don't really have to do much processing
@@ -47,13 +57,46 @@
 
         // axes
         let xvals = d3.scaleLinear()
-            .domain([TOEFLmin-5,TOEFLmax+5])
+            .domain([TOEFLmin-10,TOEFLmax+10])
             .range([20,WIDTH-20])
         
         let yvals = d3.scaleLinear()
             .domain([GREmin-10,GREmax+10])
-            .range([height-15,5])
+            .range([HEIGHT-20,20])
+
+        console.log(GREmin);
+        console.log(GREmax);
+
+        // axes and gridlines
+        let glx = d3.axisLeft(yvals).tickSize(-760).tickFormat("").ticks(12);
+        testScores.append("g").attr("class", "y gridlines") 
+            .attr("transform", "translate(30,0)")
+            .call(glx);
+
+        let glv = d3.axisBottom(xvals).tickSize(-560).tickFormat("").ticks(12);
+        testScores.append("g")
+            .attr("transform", "translate(10," + yvals(GREmin-10) + ")")
+            .attr("class", "x gridlines")
+            .call(glv);
+
+        testScores.append("g")
+            .attr("transform", "translate(10," + yvals(GREmin-10) + ")")
+            .attr("class","axis")
+            .call(d3.axisBottom(xvals).ticks(12));
+
+        testScores.append("g")
+            .attr("transform", "translate(30,0)")
+            .attr("class","axis")
+            .call(d3.axisLeft(yvals).ticks(12));  
         
+        universityData.forEach((d,i) => {
+            circle = testScores.append("circle")
+                .attr("cx", xvals(d["TOEFL Score"]))
+                .attr("cy", yvals(d["GRE Score"]))
+                .attr("r",3) // change this
+                .style("fill","blue") // change this too
+                .attr("opacity",1)
+        });
 
     }
 
