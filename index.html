@@ -5,6 +5,7 @@
     <script src="https://unpkg.com/d3-shape@1"></script>
     <script src="https://unpkg.com/d3-sankey@0"></script>
     <script src="https://d3js.org/d3.v5.min.js"></script>
+    <script src="//d3js.org/d3-scale-chromatic.v0.3.min.js"></script>
 </head>
 
 <body>
@@ -32,7 +33,7 @@
 
   <h2 class="center">U.S. Graduate Admissions</h2>
 
-  <div class="vis" id="vis1">
+  <div class="vis" id="vis1" style="text-align:center;">
   </div>
 
   <div class="vis" id="vis2">
@@ -58,11 +59,14 @@
       const TOEFLmax = d3.max(universityData, d => d['TOEFL Score']);
       const GREmin = d3.min(universityData, d => d['GRE Score']);
       const GREmax = d3.max(universityData, d => d['GRE Score']);
-      const admitMin = d3.min(universityData, d => d['Chance of Admit'] * 10);
-      const admitMax = d3.max(universityData, d => d['Chance of Admit'] * 10);
-      {{/* console.log(admitMin, admitMax);
+      const admitMin = d3.min(universityData, d => d['Chance of Admit']);
+      const admitMax = d3.max(universityData, d => d['Chance of Admit']);
+      const CGPAmin = d3.min(universityData, d => d['CGPA']);
+      const CGPAmax = d3.max(universityData, d => d['CGPA']);
+      console.log(admitMin, admitMax);
       console.log(universityData);
-      console.log(TOEFLmin, TOEFLmax); */}}
+      console.log(TOEFLmin, TOEFLmax);
+      console.log(CGPAmin, CGPAmax);
 
       // Set up svgs...we could add a third one?
       testScores = d3.select('div#vis1').append("svg")
@@ -87,6 +91,9 @@
       let rScale = d3.scaleLog()
         .domain([admitMin, admitMax])
         .range([1, 12]);
+
+      let colorScale = d3.scaleSequential(d3.interpolatePlasma)
+        .domain([CGPAmin,CGPAmax])
 
       // axes and gridlines
       let xAxis = d3.axisLeft(yScale).tickSize(-chartWidth).tickFormat("").ticks(12);
@@ -114,21 +121,22 @@
         circle = testScores.append("circle")
           .attr("cx", xScale(d["TOEFL Score"]))
           .attr("cy", yScale(d["GRE Score"]))
-          .attr("r", rScale(d['Chance of Admit'] * 10))
-          .style("fill", "blue") // change this too
-          .attr("opacity", 0.3)
+          .attr("r", rScale(d['Chance of Admit']))
+          .style("fill", colorScale(d["CGPA"])) // change this too
+          .attr("opacity", 0.5)
       });
 
 
-      //////////////////////////////////////// 
-      /////////////    svg2    /////////////// 
-      //////////////////////////////////////// 
+      ////////////////////////////////////////
+      /////////////    svg2    ///////////////
+      ////////////////////////////////////////
 
       var cornellData = await d3.csv("datasets/cornellAdmissions.csv");
 
       cornellData.forEach((d) => {
+
           if (d["Accepted"] != "Rejected" && d["Accepted"] != "Accepted"){
-              d["Accepted"] = "Rejected";
+              d["Accepted"] = "Rejected" 
           }
           d["GPA"] = Number(d["GPA"]);
           d["GRE_Verbal"] = Number(d["GRE_Verbal"]);
@@ -243,12 +251,12 @@
 
 
       });
-    
+
       const sankey = d3.sankey()
         .nodeWidth(15)
         .nodePadding(10)
         .extent([[1, 1], [800 - 1, 800 - 5]]);
-    
+        
       graph = sankey({nodes, links})
       console.log(graph);
       admissionChance.append("g")
