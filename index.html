@@ -134,13 +134,27 @@
       var cornellData = await d3.csv("datasets/cornellAdmissions.csv");
 
       cornellData.forEach((d) => {
+<<<<<<< HEAD
           if (d["Rejected"] != "Rejected" && d["Rejected"] != "Accepted"){
               d["Rejected"] = "Rejected"
+=======
+          if (d["Accepted"] != "Rejected" && d["Accepted"] != "Accepted"){
+              d["Accepted"] = "Rejected" 
+>>>>>>> a8beaf770affddde9b81958b6b740d699d72dce9
           }
       });
 
-
-      const nodeNames = ["Cornell", "High GPA", "Average GPA", "Low GPA", "Accepted", "Rejected"];
+      const nodeNames = [
+          "Cornell", 
+          "High GPA",
+          "Average GPA",
+          "Low GPA",
+          "High GRE Verbal",
+          "Average GRE Verbal",
+          "Low GRE Verbal",
+          "Accepted",
+          "Rejected",
+          ];
       let indexMapping = new Map(nodeNames.map((d,i) => [d,i]));
       {{/* console.log("here")
       console.log(indexMapping); */}}
@@ -149,35 +163,123 @@
           nodes.push({name:nodeName});
       })
 
+      console.log(cornellData);
       // First add connections between cornell and rejected
       let links = [];
       cornellData.forEach((d) => {
+          {{/* links.push({
+              source: indexMapping.get("Cornell"),
+              target: indexMapping.get(d["Accepted"]),
+              value: 1
+          }); */}}
+
+          var gpa = d["GPA"];
+          var gpaStatus; // Could make scale for this
+          if (gpa > 3.5) {
+              gpaStatus = "High GPA"
+          } else if (gpa > 3.0 && gpa <= 3.5) {
+              gpaStatus = "Average GPA";
+          } else {
+              gpaStatus = "Low GPA"
+          }
+
+          var greVerbalScore = d["GRE Verbal"]
+          var greVerbalStatus;
+          {{/* if (greVerbalScore > 158) {
+              greVerbalStatus = "High GRE Verbal";
+          } else if (greVerbalScore > 151 && greVerbalScore <= 158) {
+              greVerbalStatus = "Average GRE Verbal";
+          } else {
+              greVerbalStatus = "Low GRE Verbal"
+          } */}}
+
+          if (greVerbalScore > 158) {
+              greVerbalStatus = "High GRE Verbal";
+          } else {
+              greVerbalStatus = "Low GRE Verbal"
+          }
+
+          console.log(greVerbalStatus);
+          {{/* var gpa = d[" */}}
           links.push({
               source: indexMapping.get("Cornell"),
-              target: indexMapping.get(d["Rejected"]),
-              value: 25
+              target: indexMapping.get(gpaStatus),
+              value: 200
+          });
+          links.push({
+              source: indexMapping.get(gpaStatus),
+              target: indexMapping.get(greVerbalStatus),
+              value: 200
+          });
+          links.push({
+              source: indexMapping.get(greVerbalStatus),
+              target: indexMapping.get(d["Accepted"]),
+              value: 200
           });
       });
 
       const sankey = d3.sankey()
         .nodeWidth(15)
         .nodePadding(10)
+<<<<<<< HEAD
         .extent([[1, 1], [600 - 1, 800 - 5]]);
 
+=======
+        .extent([[1, 1], [600 - 1, 600 - 5]]);
+    
+>>>>>>> a8beaf770affddde9b81958b6b740d699d72dce9
       graph = sankey({nodes, links})
-      {{/* admissionChance.append("g")
+      console.log(graph);
+      admissionChance.append("g")
         .attr("stroke","#000")
         .selectAll("rect")
         .data(graph.nodes)
         .join("rect")
         .attr("x", d => d.x0)
-        .attr("y", d => d,y0)
+        .attr("y", d => d.y0)
         .attr("height", d => d.y1 - d.y0)
         .attr("width", d => d.x1 - d.x0)
         .append("title")
+<<<<<<< HEAD
             .text(d => ) */}}
 
 
+=======
+            .text(d => d.name)
+
+      const link = admissionChance.append("g")
+        .attr("fill","gray")
+        .attr("opacity",.3)
+        .attr("stroke-width",.25)
+        .selectAll("g")
+        .data(graph.links)
+        .join("g")
+
+      {{/* const gradient = link.append("linearGradient")
+        .attr("x1", d => d.source.x1)
+        .attr("x2", d => d.target.x0); */}}
+            
+      link.append("path")
+        .attr("d",d3.sankeyLinkHorizontal())
+    
+      link.append("title")
+        .text(d => `${d.source.name} → ${d.target.name}`);
+
+      admissionChance.append("g")
+      .style("font", "10px sans-serif")
+      .selectAll("text")
+      .data(nodes)
+      .join("text")
+      .attr("x", d => d.x0 < WIDTH / 2 ? d.x1 + 6 : d.x0 - 6)
+      .attr("y", d => (d.y1 + d.y0) / 2)
+      .attr("dy", "0.35em")
+      .attr("text-anchor", d => d.x0 < WIDTH / 2 ? "start" : "end")
+      .text(d => d.name);
+
+
+      
+      
+>>>>>>> a8beaf770affddde9b81958b6b740d699d72dce9
 
 
 
