@@ -1,29 +1,39 @@
 <head>
-    {{/* <script src="https://unpkg.com/d3-array@1"></script>
-    <script src="https://unpkg.com/d3-collection@1"></script>
-    <script src="https://unpkg.com/d3-path@1"></script>
-    <script src="https://unpkg.com/d3-shape@1"></script>
-    <script src="https://unpkg.com/d3-sankey@0"></script>
-    <script src="https://d3js.org/d3.v5.min.js"></script> */}}
-    <script src="//d3js.org/d3-scale-chromatic.v0.3.min.js"></script>
+  <script src="https://unpkg.com/d3-array@1"></script>
+  <script src="https://unpkg.com/d3-collection@1"></script>
+  <script src="https://unpkg.com/d3-path@1"></script>
+  <script src="https://unpkg.com/d3-shape@1"></script>
+  <script src="https://unpkg.com/d3-sankey@0"></script>
+  <script src="https://d3js.org/d3.v5.min.js"></script>
+  <script src="//d3js.org/d3-scale-chromatic.v0.3.min.js"></script>
 </head>
 
 <body>
   <style>
-    .center {
+    body {
+      font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+      background-color: rgb(183, 167, 231);
+    }
+
+    h1#about {
       text-align: center;
-      font-family: Verdana;
+      margin-bottom: 5px;
     }
 
-    .vis {
-      display: inline-block;
+    p {
+      display: block;
+      padding-right: 750px;
     }
 
-    /* .line {
-          stroke: gray;
-      } */
+    div#vis1 {
+      text-align: center;
+      text-anchor: middle;
+      display: block;
+    }
+
     .gridlines line {
-      stroke: gray;
+      stroke: #504E48;
+      stroke-width: 0.5;
     }
 
     .gridlines .domain {
@@ -31,100 +41,167 @@
     }
   </style>
 
-  <h2 class="center">U.S. Graduate Admissions</h2>
-
-  <div class="vis" id="vis1" style="text-align:center;">
+  <h1 id="about">United States Graduate School Admissions</h1>
+  <center><i>Manish Saha, Frank Rodriguez, Marcela Rey Rojas</i></center>
+  <br>
+  <div id="vis1About">
+    <h2>How do test scores and GPA affect admission chance for foreign students?</h2>
+    <p>
+      In this visualization, we show how standardized test scores and college GPA influence one's admission chance in
+      American graduate schools. While the <a href="https://www.kaptest.com/gre/what-is-the-gre">GRE</a> measures an
+      applicant's overall readiness for graduate-level coursework, the <a
+        href="https://www.ets.org/toefl/ibt/about">TOEFL</a> tests their English language ability. Chance of admit
+      (ranging from ~0% to ~100%) is modeled with the size of each data point. <br><br>
+      <i>Note: <a href="https://www.easycalculation.com/maths-dictionary/cgpa.html">CGPA</a> is the Cumulative Grade
+        Point Average. To convert to a percentage, multiply the CGPA by 9.5.<br>(e.g. 10 CGPA = 10 * 9.5 = 95%)</i>
+    </p>
+  </div>
+  <div id="vis1">
   </div>
 
-  <div class="vis" id="vis2">
+  <br><br>
+
+  <div id="vis2">
   </div>
 
   <script>
     const requestData = async () => {
-      let universityData = await d3.csv("datasets/admissions.csv");
-      const WIDTH = 800;
-      const HEIGHT = 600;
-      const margin = { top: 20, left: 20, bottom: 20, right: 20 };
-      const chartWidth = WIDTH - margin.left - margin.right;
-      const chartHeight = HEIGHT - margin.top - margin.bottom;
+      let universityData = await d3.csv('datasets/admissions.csv');
+      let WIDTH = 1050;
+      let HEIGHT = 700;
+      let margin = { top: 20, left: 70, bottom: 50, right: 100 };
+      let chartWidth = WIDTH - margin.left - margin.right;
+      let chartHeight = HEIGHT - margin.top - margin.bottom;
 
-      // Cast string values to numbers
+      // cast string values to numbers
       universityData.forEach(d => {
-        Object.keys(d).forEach(field => {
-          d[field] = Number(d[field])
+        Object.keys(d).forEach(key => {
+          d[key] = Number(d[key]);
+          if (key === 'Chance of Admit')
+            d[key] = d[key] * 10;
         });
       });
 
-      const TOEFLmin = d3.min(universityData, d => d['TOEFL Score']);
-      const TOEFLmax = d3.max(universityData, d => d['TOEFL Score']);
-      const GREmin = d3.min(universityData, d => d['GRE Score']);
-      const GREmax = d3.max(universityData, d => d['GRE Score']);
-      const admitMin = d3.min(universityData, d => d['Chance of Admit']);
-      const admitMax = d3.max(universityData, d => d['Chance of Admit']);
-      const CGPAmin = d3.min(universityData, d => d['CGPA']);
-      const CGPAmax = d3.max(universityData, d => d['CGPA']);
-      console.log(admitMin, admitMax);
-      console.log(universityData);
-      console.log(TOEFLmin, TOEFLmax);
-      console.log(CGPAmin, CGPAmax);
+      // extract domains for relevant metrics
+      let TOEFLMinMax = d3.extent(universityData, d => d['TOEFL Score']);
+      let GREMinMax = d3.extent(universityData, d => d['GRE Score']);
+      console.log(TOEFLMinMax, GREMinMax)
+      // add padding for domains
+      TOEFLMinMax[0] -= 2;
+      TOEFLMinMax[1] += 2;
+      GREMinMax[0] -= 2;
+      GREMinMax[1] += 2;
+      const admitMinMax = d3.extent(universityData, d => d['Chance of Admit']);
+      const CGPAMinMax = d3.extent(universityData, d => d['CGPA']);
 
-      // Set up svgs...we could add a third one?
-      testScores = d3.select('div#vis1').append("svg")
+      // SVG declaration
+      testScoreSVG = d3.select('div#vis1').append("svg")
         .attr("width", WIDTH)
         .attr("height", HEIGHT)
-        .attr("id", "svgTestScores");
+        .attr("id", "testScoreSVG");
 
       admissionChance = d3.select('div#vis2').append("svg")
         .attr("width", 1300)
         .attr("height", 1300)
         .attr("id", "svgAdmissions")
 
-      // axes
+      // scales
       let xScale = d3.scaleLinear()
-        .domain([TOEFLmin - 2, TOEFLmax])
-        .range([margin.left, WIDTH - margin.right])
-
+        .domain(TOEFLMinMax)
+        .range([0, chartWidth])
       let yScale = d3.scaleLinear()
-        .domain([GREmin - 5, GREmax + 5])
-        .range([HEIGHT - margin.top, margin.bottom]);
-
+        .domain(GREMinMax)
+        .range([chartHeight, 0]);
       let rScale = d3.scaleLog()
-        .domain([admitMin, admitMax])
-        .range([1, 12]);
+        .domain(admitMinMax)
+        .range([2, 12]);
+      let colorScale = d3.scaleSequential(d3.interpolateBlues)
+        .domain(CGPAMinMax)
 
-      let colorScale = d3.scaleSequential(d3.interpolatePlasma)
-        .domain([CGPAmin,CGPAmax])
+      // gridlines (horizontal gridlines, vertical gridlines)
+      let horizontalLines = d3.axisLeft(yScale).tickSize(-chartWidth - 10).ticks(10).tickFormat("");
+      testScoreSVG.append("g").attr("class", "y gridlines")
+        .attr("transform", "translate(" + (margin.left - 10) + "," + margin.top + ")")
+        .call(horizontalLines);
+      let verticalLines = d3.axisBottom(xScale).tickSize(-chartHeight - 10).ticks(12).tickFormat("");
+      testScoreSVG.append("g").attr("class", "x gridlines")
+        .attr("transform", "translate(" + margin.left + "," + (chartHeight + margin.top + 10) + ")")
+        .call(verticalLines);
 
-      // axes and gridlines
-      let xAxis = d3.axisLeft(yScale).tickSize(-chartWidth).tickFormat("").ticks(12);
-      testScores.append("g").attr("class", "y gridlines")
-        .attr("transform", "translate(30,0)")
-        .call(xAxis);
-
-      let yAxis = d3.axisBottom(xScale).tickSize(-chartHeight).tickFormat("").ticks(12);
-      testScores.append("g")
-        .attr("transform", "translate(10," + yScale(GREmin - 5) + ")")
-        .attr("class", "x gridlines")
-        .call(yAxis);
-
-      testScores.append("g")
-        .attr("transform", "translate(10," + yScale(GREmin - 5) + ")")
+      // axes (y axis, x axis)
+      testScoreSVG.append("g")
+        .attr("transform", "translate(" + (margin.left - 10) + "," + margin.top + ")")
         .attr("class", "axis")
+        .style("font-size", 12)
+        .call(d3.axisLeft(yScale).ticks(10));
+      testScoreSVG.append("g")
+        .attr("transform", "translate(" + margin.left + "," + (chartHeight + margin.top + 10) + ")")
+        .attr("class", "axis")
+        .style("font-size", 12)
         .call(d3.axisBottom(xScale).ticks(12));
 
-      testScores.append("g")
-        .attr("transform", "translate(30,0)")
-        .attr("class", "axis")
-        .call(d3.axisLeft(yScale).ticks(12));
+      // axis labels
+      testScoreSVG.append("g")
+        .attr("transform", "translate(" + (margin.left / 3) + "," + (margin.top + chartHeight / 2) + ")")
+        .append("text")
+        .attr("transform", "rotate(-90)")
+        .text("GRE Score");
+      testScoreSVG.append("g")
+        .attr("transform", "translate(" + (margin.left + chartWidth / 2) + "," + (margin.top + chartHeight + margin.bottom) + ")")
+        .append("text")
+        .text("TOEFL Score");
 
-      universityData.forEach((d, i) => {
-        circle = testScores.append("circle")
+      // data points
+      let plot = testScoreSVG.append("g")
+        .attr("transform", "translate(" + (margin.left + 0.5) + "," + margin.top + ")");
+      universityData.forEach(d => {
+        circle = plot.append("circle")
           .attr("cx", xScale(d["TOEFL Score"]))
           .attr("cy", yScale(d["GRE Score"]))
           .attr("r", rScale(d['Chance of Admit']))
-          .style("fill", colorScale(d["CGPA"])) // change this too
-          .attr("opacity", 0.5)
+          .style("fill", colorScale(d["CGPA"]))
+          .attr("opacity", 0.8)
       });
+
+      // linear gradient
+      // https://www.visualcinnamon.com/2016/05/smooth-color-legend-d3-svg-gradient.html reference
+      let gpaGradient = testScoreSVG.append('defs')
+        .append('linearGradient')
+        .attr('id', 'gpaGradient')
+        .attr("x1", "0%")
+        .attr("y1", "0%")
+        .attr("x2", "0%")
+        .attr("y2", "100%");
+      gpaGradient.append('stop')
+        .attr("stop-color", d3.schemeBlues[9][8])
+        .attr('offset', '0%');
+      gpaGradient.append('stop')
+        .attr("stop-color", d3.schemeBlues[9][0])
+        .attr('offset', '100%');
+      // Use the gradient to set the shape fill
+      plot.append('g')
+        .attr('transform', 'translate(' + (chartWidth + 10) + ',0)')
+        .append('rect')
+        .attr("x", 0)
+        .attr("y", 0)
+        .attr('width', margin.right / 3)
+        .attr('height', chartHeight)
+        .style('fill', 'url(#gpaGradient');
+
+      // linear gradient axis + label
+      let gpaScale = d3.scaleLinear()
+        .domain(colorScale.domain())
+        .range([chartHeight, 0]);
+      testScoreSVG.append("g")
+        .attr("transform", "translate(" + (margin.left + chartWidth + margin.right / 2) + "," + margin.top + ")")
+        .attr("class", "axis")
+        .style("font-size", 12)
+        .call(d3.axisRight(gpaScale).ticks(12));
+      testScoreSVG.append("g")
+        .attr("transform", "translate(" + (1.5 * margin.left + chartWidth + margin.right / 2) + "," + (margin.top + chartHeight / 2) + ")")
+        .append("text")
+        .attr("transform", "rotate(90)")
+        .text("CGPA");
 
 
       ////////////////////////////////////////
@@ -166,7 +243,7 @@
       let indexMapping = new Map(nodeNames.map((d,i) => [d,i]));
       let nodes = [];
       nodeNames.forEach((nodeName) => {
-          nodes.push({name:nodeName});
+        nodes.push({ name: nodeName });
       })
 
       let links = [];
@@ -285,7 +362,7 @@
 
       console.log(graph.links);
       admissionChance.append("g")
-        .attr("stroke","#000")
+        .attr("stroke", "#000")
         .selectAll("rect")
         .data(graph.nodes)
         .join("rect")
@@ -294,7 +371,7 @@
         .attr("height", d => (d.y1 - d.y0))
         .attr("width", d => d.x1 - d.x0)
         .append("title")
-            .text(d => d.name)
+        .text(d => d.name)
 
       admissionChance.append("g")
           .attr("fill", "none")
