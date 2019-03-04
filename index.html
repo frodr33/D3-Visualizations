@@ -38,6 +38,27 @@
     .gridlines .domain {
       stroke: none;
     }
+
+    .node rect {
+      cursor: move;
+      fill-opacity: .9;
+      shape-rendering: crispEdges;
+    }
+
+    .node text {
+      pointer-events: none;
+      text-shadow: 0 1px 0 #fff;
+    }
+
+    .link {
+      fill: none;
+      stroke: #000;
+      stroke-opacity: .2;
+    }
+
+    .link:hover {
+      stroke-opacity: .5;
+    }
   </style>
 
   <h1 id="about">United States Graduate School Admissions</h1>
@@ -87,7 +108,6 @@
       // extract domains for relevant metrics
       let TOEFLMinMax = d3.extent(universityData, d => d['TOEFL Score']);
       let GREMinMax = d3.extent(universityData, d => d['GRE Score']);
-      console.log(TOEFLMinMax, GREMinMax)
       // add padding for domains
       TOEFLMinMax[0] -= 2;
       TOEFLMinMax[1] += 2;
@@ -221,8 +241,6 @@
       //   d["GRE_Quant"] = Number(d["GRE_Quant"]);
       //   d["GRE_Writing"] = Number(d["GRE_Writing"]);
       // });
-
-      // cornellData = cornellData.filter(d => d.College === 'Yale')
 
       // const nodeNames = [
       //   "Cornell",
@@ -420,11 +438,9 @@
         .attr("id", "svgAdmissions");
 
       let ivyData = await d3.csv('datasets/cornellAdmissions.csv');
-      //ivyData = ivyData.filter(d => d.Accepted === 'Accepted' || d.Accepted === 'Rejected' && (d.College === 'Cornell' || d.College === 'Yale' || d.College === 'Berkeley'));
+      ivyData = ivyData.filter(d => d.Accepted === 'Accepted' || d.Accepted === 'Rejected');
+      console.log(ivyData);
       ivyData.forEach(d => {
-        if (d["Accepted"] != "Rejected" && d["Accepted"] != "Accepted") {
-          d["Accepted"] = "Rejected"
-        }
         d["GPA"] = Number(d["GPA"]);
         d["GRE_Verbal"] = Number(d["GRE_Verbal"]);
         d["GRE_Quant"] = Number(d["GRE_Quant"]);
@@ -434,11 +450,10 @@
       let GREQ = d3.extent(ivyData, d => d.GRE_Quant);
       let GREV = d3.extent(ivyData, d => d.GRE_Verbal);
       let GREW = d3.extent(ivyData, d => d.GRE_Writing)
-      gpaScale = d3.scaleLinear().domain(GPAMinMax).range([0, 5]);
-      let GREQScale = d3.scaleLinear().domain(GREQ).range([0, 3]);
-      let GREVScale = d3.scaleLinear().domain(GREV).range([0, 3]);
-      let GREWScale = d3.scaleLinear().domain(GREW).range([0, 3]);
-      console.log(GPAMinMax, GREV, GREQ, GREW);
+      gpaScale = d3.scaleLinear().domain(GPAMinMax).range([0.1, 5]);
+      let GREQScale = d3.scaleLinear().domain(GREQ).range([0.1, 3]);
+      let GREVScale = d3.scaleLinear().domain(GREV).range([0.1, 3]);
+      let GREWScale = d3.scaleLinear().domain(GREW).range([0.1, 3]);
 
       margin = { top: 20, left: 70, bottom: 50, right: 100 };
       chartWidth = WIDTH - margin.left - margin.right;
@@ -468,8 +483,6 @@
       ];
       let nodes = [];
       names.forEach(d => nodes.push({ name: d }));
-      console.log(nodes)
-      let indexMapping = new Map(names.map((d, i) => [d, i]));
 
       // populate links
       links = [];
@@ -521,7 +534,7 @@
         .nodeWidth(36)
         .nodePadding(10)
         .extent([[20, 20], [1200 - 1, 600 - 5]]);
-      let graph = sankey({ nodes, links })
+      let graph = sankey({ nodes, links });
 
       let link = graduateDecisions.append("g").selectAll(".link")
         .data(graph.links)
@@ -536,7 +549,7 @@
         .enter().append("g")
         .attr("class", "node")
         .attr("transform", function (d) {
-          return "translate(" + (margin.left + d.x) + "," + (margin.top + d.y) + ")";
+          return "translate(" + (margin.left + d.x0) + "," + (margin.top + d.y0) + ")";
         });
 
       // add the rectangles for the nodes
@@ -547,7 +560,7 @@
         .style("stroke", d => d3.rgb(d.color).darker(2))
         .append("title")
         .text(function (d) {
-          return d.name + "\n" + format(d.value);
+          return d.name + "\n";
         });
 
       // add in the title for the nodes
@@ -557,7 +570,7 @@
         .attr("dy", ".35em")
         .attr("text-anchor", "end")
         .text(d => d.name)
-        .filter(d => d.x < width / 2)
+        .filter(d => d.x < WIDTH / 2)
         .attr("x", 6 + sankey.nodeWidth())
         .attr("text-anchor", "start");
 
