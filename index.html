@@ -1,11 +1,10 @@
 <head>
+  <script src="https://d3js.org/d3.v5.min.js"></script>
   <script src="https://unpkg.com/d3-array@1"></script>
   <script src="https://unpkg.com/d3-collection@1"></script>
   <script src="https://unpkg.com/d3-path@1"></script>
   <script src="https://unpkg.com/d3-shape@1"></script>
   <script src="https://unpkg.com/d3-sankey@0"></script>
-  <script src="https://d3js.org/d3.v5.min.js"></script>
-  <script src="//d3js.org/d3-scale-chromatic.v0.3.min.js"></script>
 </head>
 
 <body>
@@ -62,6 +61,9 @@
   <br><br>
 
   <div id="vis2">
+  </div>
+
+  <div id="vis3">
   </div>
 
   <script>
@@ -208,199 +210,383 @@
       /////////////    svg2    ///////////////
       ////////////////////////////////////////
 
-      var cornellData = await d3.csv("datasets/cornellAdmissions.csv");
+      // var cornellData = await d3.csv("datasets/cornellAdmissions.csv");
 
-      cornellData.forEach((d) => {
-          if (d["Accepted"] != "Rejected" && d["Accepted"] != "Accepted"){
-              d["Accepted"] = "Rejected" 
-          }
-          d["GPA"] = Number(d["GPA"]);
-          d["GRE_Verbal"] = Number(d["GRE_Verbal"]);
-          d["GRE_Quant"] = Number(d["GRE_Quant"]);
-          d["GRE_Writing"] = Number(d["GRE_Writing"]);
+      // cornellData.forEach((d) => {
+      //   if (d["Accepted"] != "Rejected" && d["Accepted"] != "Accepted") {
+      //     d["Accepted"] = "Rejected"
+      //   }
+      //   d["GPA"] = Number(d["GPA"]);
+      //   d["GRE_Verbal"] = Number(d["GRE_Verbal"]);
+      //   d["GRE_Quant"] = Number(d["GRE_Quant"]);
+      //   d["GRE_Writing"] = Number(d["GRE_Writing"]);
+      // });
+
+      // cornellData = cornellData.filter(d => d.College === 'Yale')
+
+      // const nodeNames = [
+      //   "Cornell",
+      //   "Yale",
+      //   "Berkeley",
+      //   "High GPA",
+      //   "Average GPA",
+      //   "Low GPA",
+      //   "High GRE Verbal",
+      //   "Average GRE Verbal",
+      //   "Low GRE Verbal",
+      //   "High GRE Quant",
+      //   "Average GRE Quant",
+      //   "Low GRE Quant",
+      //   "High GRE Writing",
+      //   "Average GRE Writing",
+      //   "Low GRE Writing",
+      //   "Accepted",
+      //   "Rejected",
+      // ];
+
+      // let indexMapping = new Map(nodeNames.map((d, i) => [d, i]));
+      // let nodes = [];
+      // nodeNames.forEach((nodeName) => {
+      //   nodes.push({ name: nodeName });
+      // })
+
+      // let links = [];
+      // cornellData.forEach((d) => {
+      //   var school = d["College"];
+      //   var gpa = d["GPA"];
+      //   var gpaStatus; // Could make scale for this
+      //   var greVerbalScore = d["GRE_Verbal"]
+      //   var greVerbalStatus;
+      //   var greQuantScore = d["GRE_Quant"]
+      //   var greQuantStatus;
+      //   var greWritingScore = d["GRE_Writing"]
+      //   var greWritingStatus;
+
+      //   // Can make this cleaner later
+      //   if (gpa > 3.5) {
+      //     gpaStatus = "High GPA"
+      //   } else if (gpa > 3.0 && gpa <= 3.5) {
+      //     gpaStatus = "Average GPA";
+      //   } else {
+      //     gpaStatus = "Low GPA"
+      //   }
+
+      //   if (greQuantScore > 158.0) {
+      //     greQuantStatus = "High GRE Verbal";
+      //   } else if (greQuantScore > 151.0 && greQuantScore <= 158.0) {
+      //     greQuantStatus = "Average GRE Verbal";
+      //   } else {
+      //     greQuantStatus = "Low GRE Verbal"
+      //   }
+
+      //   if (greVerbalScore > 158.0) {
+      //     greVerbalStatus = "High GRE Quant";
+      //   } else if (greVerbalScore > 151.0 && greVerbalScore <= 158.0) {
+      //     greVerbalStatus = "Average GRE Quant";
+      //   } else {
+      //     greVerbalStatus = "Low GRE Quant"
+      //   }
+
+      //   if (greWritingScore > 4.5) {
+      //     greWritingStatus = "High GRE Writing";
+      //   } else if (greWritingScore > 4 && greWritingScore <= 4.5) {
+      //     greWritingStatus = "Average GRE Writing";
+      //   } else {
+      //     greWritingStatus = "Low GRE Writing"
+      //   }
+
+      //   links.push({
+      //     source: indexMapping.get(school),
+      //     target: indexMapping.get(gpaStatus),
+      //     school: school,
+      //     color: school === 'Cornell' ? 'red' : school === 'Yale' ? 'blue' : 'yellow',
+      //     value: 1
+      //   }, {
+      //       source: indexMapping.get(gpaStatus),
+      //       target: indexMapping.get(greVerbalStatus),
+      //       school: school,
+      //       color: school === 'Cornell' ? 'red' : school === 'Yale' ? 'blue' : 'yellow',
+      //       value: 1
+      //     },
+      //     {
+      //       source: indexMapping.get(greVerbalStatus),
+      //       target: indexMapping.get(greQuantStatus),
+      //       school: school,
+      //       color: school === 'Cornell' ? 'red' : school === 'Yale' ? 'blue' : 'yellow',
+      //       value: 1
+      //     },
+      //     {
+      //       source: indexMapping.get(greQuantStatus),
+      //       target: indexMapping.get(greWritingStatus),
+      //       school: school,
+      //       color: school === 'Cornell' ? 'red' : school === 'Yale' ? 'blue' : 'yellow',
+      //       value: 1
+      //     }, {
+      //       source: indexMapping.get(greWritingStatus),
+      //       target: indexMapping.get(d["Accepted"]),
+      //       school: school,
+      //       color: school === 'Cornell' ? 'red' : school === 'Yale' ? 'blue' : 'yellow',
+      //       value: 1
+      //     });
+      // });
+
+
+
+      // /* var links = []
+      // var m = new Map();
+      // rawLinks.forEach((d) => {
+      //   var key = d.source+d.target+d.school;
+      //   var val = m.get(key)
+      //   if (val == null){
+      //     m.set((key),{
+      //       value: 1,
+      //       school: d.school,
+      //       source: d.source,
+      //       target: d.target
+      //     })
+      //   } 
+      // })
+      // let allPossibleLinks = [...m.keys()]
+      // allPossibleLinks.forEach((key) => {
+      //   var obj = m.get(key);
+      //   links.push({
+      //       source: obj.source,
+      //       target: obj.target,
+      //       school: obj.school,
+      //       value: obj.value         
+      //   })
+      // }) */
+
+
+      // const sankey = d3.sankey()
+      //   .nodeWidth(15)
+      //   .nodePadding(10)
+      //   .extent([[1, 30], [1200 - 1, 600 - 5]]);
+
+      // console.log(nodes)
+      // console.log(links)
+
+      // graph = sankey({ nodes, links })
+
+      // console.log(graph.links);
+      // admissionChance.append("g")
+      //   .attr("stroke", "#000")
+      //   .selectAll("rect")
+      //   .data(graph.nodes)
+      //   .join("rect")
+      //   .attr("x", d => d.x0)
+      //   .attr("y", d => d.y0)
+      //   .attr("height", d => (d.y1 - d.y0))
+      //   .attr("width", d => d.x1 - d.x0)
+      //   .append("title")
+      //   .text(d => d.name)
+
+      // admissionChance.append("g")
+      //   .attr("fill", "none")
+      //   .attr("stroke-opacity", .6)
+      //   .selectAll("path")
+      //   .data(graph.links)
+      //   .join("path")
+      //   .attr("stroke", d => d.color)
+      //   .style("fill-opacity", 0.6)
+      //   .attr("opacity", 0.6)
+      //   .attr("d", d3.sankeyLinkHorizontal())
+
+      // /* .attr("stroke", d => 
+      //     d.school === "Cornell" ? "Red"
+      //       : d.school ==="Berkeley" ? "Yellow"
+      //       : "Blue") */
+
+      // sankey.update(graph);
+
+      // admissionChance.append("g")
+      //   .style("font", "10px sans-serif")
+      //   .selectAll("text")
+      //   .data(nodes)
+      //   .join("text")
+      //   .attr("x", d => d.x0 < WIDTH / 2 ? d.x1 + 6 : d.x0 - 6)
+      //   .attr("y", d => (d.y1 + d.y0) / 2)
+      //   .attr("text-anchor", d => d.x0 < WIDTH / 2 ? "start" : "end")
+      //   .text(d => d.name);
+
+
+
+
+      WIDTH = 1300;
+      HEIGHT = 1300;
+      graduateDecisions = d3.select('div#vis3').append("svg")
+        .attr("width", WIDTH)
+        .attr("height", HEIGHT)
+        .attr("id", "svgAdmissions");
+
+      let ivyData = await d3.csv('datasets/cornellAdmissions.csv');
+      //ivyData = ivyData.filter(d => d.Accepted === 'Accepted' || d.Accepted === 'Rejected' && (d.College === 'Cornell' || d.College === 'Yale' || d.College === 'Berkeley'));
+      ivyData.forEach(d => {
+        if (d["Accepted"] != "Rejected" && d["Accepted"] != "Accepted") {
+          d["Accepted"] = "Rejected"
+        }
+        d["GPA"] = Number(d["GPA"]);
+        d["GRE_Verbal"] = Number(d["GRE_Verbal"]);
+        d["GRE_Quant"] = Number(d["GRE_Quant"]);
+        d["GRE_Writing"] = Number(d["GRE_Writing"])
       });
+      let GPAMinMax = d3.extent(ivyData, d => d.GPA);
+      let GREQ = d3.extent(ivyData, d => d.GRE_Quant);
+      let GREV = d3.extent(ivyData, d => d.GRE_Verbal);
+      let GREW = d3.extent(ivyData, d => d.GRE_Writing)
+      gpaScale = d3.scaleLinear().domain(GPAMinMax).range([0, 5]);
+      let GREQScale = d3.scaleLinear().domain(GREQ).range([0, 3]);
+      let GREVScale = d3.scaleLinear().domain(GREV).range([0, 3]);
+      let GREWScale = d3.scaleLinear().domain(GREW).range([0, 3]);
+      console.log(GPAMinMax, GREV, GREQ, GREW);
 
-      const nodeNames = [
-          "Cornell", 
-          "Yale", 
-          "Berkeley", 
-          "High GPA",
-          "Average GPA",
-          "Low GPA",
-          "High GRE Verbal",
-          "Average GRE Verbal",
-          "Low GRE Verbal",
-          "High GRE Quant",
-          "Average GRE Quant",
-          "Low GRE Quant",
-          "High GRE Writing",
-          "Average GRE Writing",
-          "Low GRE Writing",
-          "Accepted",
-          "Rejected",
-          ];
+      margin = { top: 20, left: 70, bottom: 50, right: 100 };
+      chartWidth = WIDTH - margin.left - margin.right;
+      chartHeight = HEIGHT - margin.top - margin.bottom;
 
-      let indexMapping = new Map(nodeNames.map((d,i) => [d,i]));
+      // populate nodes
+      let names = [
+        "Cornell",
+        "Yale",
+        "Berkeley",
+        "< 5",
+        "< 4",
+        "< 3",
+        "< 2",
+        "< 1",
+        "High GRE Verbal",
+        "Average GRE Verbal",
+        "Low GRE Verbal",
+        "High GRE Quant",
+        "Average GRE Quant",
+        "Low GRE Quant",
+        "High GRE Writing",
+        "Average GRE Writing",
+        "Low GRE Writing",
+        "Accepted",
+        "Rejected",
+      ];
       let nodes = [];
-      nodeNames.forEach((nodeName) => {
-        nodes.push({ name: nodeName });
-      })
+      names.forEach(d => nodes.push({ name: d }));
+      console.log(nodes)
+      let indexMapping = new Map(names.map((d, i) => [d, i]));
 
-      let links = [];
-      cornellData.forEach((d) => {
-          var school = d["College"]
-          var gpa = d["GPA"];
-          var gpaStatus; // Could make scale for this
-          var greVerbalScore = d["GRE_Verbal"]
-          var greVerbalStatus;
-          var greQuantScore = d["GRE_Quant"]
-          var greQuantStatus;
-          var greWritingScore = d["GRE_Writing"]
-          var greWritingStatus;
-
-
-          // Can make this cleaner later
-          if (gpa > 3.5) {
-              gpaStatus = "High GPA"
-          } else if (gpa > 3.0 && gpa <= 3.5) {
-              gpaStatus = "Average GPA";
-          } else {
-              gpaStatus = "Low GPA"
-          }
-          
-          if (greQuantScore > 158.0) {
-              greQuantStatus = "High GRE Verbal";
-          } else if (greQuantScore > 151.0 && greQuantScore <= 158.0) {
-              greQuantStatus = "Average GRE Verbal";
-          } else {
-              greQuantStatus = "Low GRE Verbal"
-          }
-
-          if (greVerbalScore > 158.0) {
-              greVerbalStatus = "High GRE Quant";
-          } else if (greVerbalScore > 151.0 && greVerbalScore <= 158.0) {
-              greVerbalStatus = "Average GRE Quant";
-          } else {
-              greVerbalStatus = "Low GRE Quant"
-          }
-
-          if (greWritingScore > 4.5) {
-              greWritingStatus = "High GRE Writing";
-          } else if (greWritingScore > 4 && greWritingScore <= 4.5) {
-              greWritingStatus = "Average GRE Writing";
-          } else {
-              greWritingStatus = "Low GRE Writing"
-          }
-
-          links.push({
-              source: indexMapping.get(school),
-              target: indexMapping.get(gpaStatus),
-              school: school,
-              value: 1
-          },{
-              source: indexMapping.get(gpaStatus),
-              target: indexMapping.get(greVerbalStatus),
-              school: school,
-              value: 1
+      // populate links
+      links = [];
+      ivyData.forEach((d, i) => {
+        let college = d.College;
+        let fill = college === "Cornell" ? "red" : college === "Berkeley" ? "yellow" : "blue";
+        let gpa = '< ' + Math.ceil(gpaScale(d.GPA));
+        const q = Math.ceil(GREQScale(d.GRE_Quant));
+        let quant = (q == 1 ? 'Low ' : q == 2 ? 'Average ' : 'High ') + 'GRE Quant';
+        const v = Math.ceil(GREVScale(d.GRE_Verbal));
+        let verbal = (v == 1 ? 'Low ' : v == 2 ? 'Average ' : 'High ') + 'GRE Verbal';
+        const w = Math.ceil(GREWScale(d.GRE_Writing));
+        let writing = (w == 1 ? 'Low ' : w == 2 ? 'Average ' : 'High ') + 'GRE Writing';
+        let decision = d.Accepted;
+        links.push(
+          {
+            source: college,
+            target: gpa,
+            value: i,
+            color: fill,
           },
           {
-              source: indexMapping.get(greVerbalStatus),
-              target: indexMapping.get(greQuantStatus),
-              school: school,
-              value: 1              
+            source: gpa,
+            target: quant,
+            value: i,
+            color: fill,
           },
           {
-              source: indexMapping.get(greQuantStatus),
-              target: indexMapping.get(greWritingStatus),
-              school: school,
-              value: 1
-          },{
-              source: indexMapping.get(greWritingStatus),
-              target: indexMapping.get(d["Accepted"]),
-              school: school,
-              value: 1
+            source: quant,
+            target: verbal,
+            value: i,
+            color: fill,
+          },
+          {
+            source: verbal,
+            target: writing,
+            value: i,
+            color: fill,
+          },
+          {
+            source: writing,
+            target: decision,
+            value: i,
+            color: fill,
           });
       });
 
-    
-
-      {{/* var links = []
-      var m = new Map();
-      rawLinks.forEach((d) => {
-        var key = d.source+d.target+d.school;
-        var val = m.get(key)
-        if (val == null){
-          m.set((key),{
-            value: 1,
-            school: d.school,
-            source: d.source,
-            target: d.target
-          })
-        } 
-      })
-      let allPossibleLinks = [...m.keys()]
-      allPossibleLinks.forEach((key) => {
-        var obj = m.get(key);
-        links.push({
-            source: obj.source,
-            target: obj.target,
-            school: obj.school,
-            value: obj.value         
-        })
-      }) */}}
-
-
       const sankey = d3.sankey()
-        .nodeWidth(15)
+        .nodeWidth(36)
         .nodePadding(10)
-        .extent([[1, 30], [1200 - 1, 600 - 5]]);
-      
-      console.log(nodes)
-      console.log(links)
+        .extent([[20, 20], [1200 - 1, 600 - 5]]);
+      let graph = sankey({ nodes, links })
 
-      graph = sankey({nodes, links})
-
-      console.log(graph.links);
-      admissionChance.append("g")
-        .attr("stroke", "#000")
-        .selectAll("rect")
-        .data(graph.nodes)
-        .join("rect")
-        .attr("x", d => d.x0)
-        .attr("y", d => d.y0)
-        .attr("height", d => (d.y1 - d.y0))
-        .attr("width", d => d.x1 - d.x0)
-        .append("title")
-        .text(d => d.name)
-
-      admissionChance.append("g")
-          .attr("fill", "none")
-          .attr("stroke-opacity", .6)
-        .selectAll("path")
+      let link = graduateDecisions.append("g").selectAll(".link")
         .data(graph.links)
-        .join("path")
-        .attr("stroke","green")
-          .attr("d", d3.sankeyLinkHorizontal())
+        .enter().append("path")
+        .attr("class", "link")
+        .attr("d", d3.sankeyLinkHorizontal())
+        .style("stroke-width", function (d) { return Math.max(1, d.dy); })
+        .sort(function (a, b) { return b.dy - a.dy; });
 
-          {{/* .attr("stroke", d => 
-              d.school === "Cornell" ? "Red"
-                : d.school ==="Berkeley" ? "Yellow"
-                : "Blue") */}}
+      let node = graduateDecisions.append("g").selectAll(".node")
+        .data(graph.nodes)
+        .enter().append("g")
+        .attr("class", "node")
+        .attr("transform", function (d) {
+          return "translate(" + (margin.left + d.x) + "," + (margin.top + d.y) + ")";
+        });
 
-     sankey.update(graph);
+      // add the rectangles for the nodes
+      node.append("rect")
+        .attr("height", d => d.dy)
+        .attr("width", sankey.nodeWidth())
+        .style("fill", d => d.color)
+        .style("stroke", d => d3.rgb(d.color).darker(2))
+        .append("title")
+        .text(function (d) {
+          return d.name + "\n" + format(d.value);
+        });
 
-     admissionChance.append("g")
-      .style("font", "10px sans-serif")
-      .selectAll("text")
-      .data(nodes)
-      .join("text")
-      .attr("x", d => d.x0 < WIDTH / 2 ? d.x1 + 6 : d.x0 - 6)
-      .attr("y", d => (d.y1 + d.y0) / 2)
-      .attr("text-anchor", d => d.x0 < WIDTH / 2 ? "start" : "end")
-      .text(d => d.name);
+      // add in the title for the nodes
+      node.append("text")
+        .attr("x", -6)
+        .attr("y", d => d.dy / 2)
+        .attr("dy", ".35em")
+        .attr("text-anchor", "end")
+        .text(d => d.name)
+        .filter(d => d.x < width / 2)
+        .attr("x", 6 + sankey.nodeWidth())
+        .attr("text-anchor", "start");
+
+      // admissionChance.append("g")
+      //   .attr("stroke", "#000")
+      //   .selectAll("rect")
+      //   .data(graph.nodes)
+      //   .join("rect")
+      //   .attr("x", d => d.x0)
+      //   .attr("y", d => d.y0)
+      //   .attr("height", d => (d.y1 - d.y0))
+      //   .attr("width", d => d.x1 - d.x0)
+      //   .append("title")
+      //   .text(d => d.name)
+
+      // admissionChance.append("g")
+      //   .attr("fill", "none")
+      //   .attr("stroke-opacity", .6)
+      //   .selectAll("path")
+      //   .data(graph.links)
+      //   .join("path")
+      //   .attr("stroke", d => d.color)
+      //   .style("fill-opacity", 0.6)
+      //   .attr("opacity", 0.6)
+      //   .attr("d", d3.sankeyLinkHorizontal())
+
     }
 
-    { {/* columns: (9) ["Serial No.", "GRE Score", "TOEFL Score", "University Rating", "SOP", "LOR ", "CGPA", "Research", "Chance of Admit "] */ } }
+    /* columns: (9) ["Serial No.", "GRE Score", "TOEFL Score", "University Rating", "SOP", "LOR ", "CGPA", "Research", "Chance of Admit "] */
     requestData();
   </script>
 </body>
