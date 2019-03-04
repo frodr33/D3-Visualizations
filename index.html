@@ -1,10 +1,10 @@
 <head>
-    <script src="https://unpkg.com/d3-array@1"></script>
+    {{/* <script src="https://unpkg.com/d3-array@1"></script>
     <script src="https://unpkg.com/d3-collection@1"></script>
     <script src="https://unpkg.com/d3-path@1"></script>
     <script src="https://unpkg.com/d3-shape@1"></script>
     <script src="https://unpkg.com/d3-sankey@0"></script>
-    <script src="https://d3js.org/d3.v5.min.js"></script>
+    <script src="https://d3js.org/d3.v5.min.js"></script> */}}
     <script src="//d3js.org/d3-scale-chromatic.v0.3.min.js"></script>
 </head>
 
@@ -152,33 +152,36 @@
           "High GRE Verbal",
           "Average GRE Verbal",
           "Low GRE Verbal",
+          "High GRE Quant",
+          "Average GRE Quant",
+          "Low GRE Quant",
+          "High GRE Writing",
+          "Average GRE Writing",
+          "Low GRE Writing",
           "Accepted",
           "Rejected",
           ];
 
-          {{/* "High GRE Quant",
-          "Average GRE Quant",
-          "Low GRE Quant", */}}
+
       let indexMapping = new Map(nodeNames.map((d,i) => [d,i]));
-      {{/* console.log("here")
-      console.log(indexMapping); */}}
       let nodes = [];
       nodeNames.forEach((nodeName) => {
           nodes.push({name:nodeName});
       })
 
-      {{/* console.log(cornellData); */}}
-      // First add connections between cornell and rejected
       let links = [];
       cornellData.forEach((d) => {
-          {{/* links.push({
-              source: indexMapping.get("Cornell"),
-              target: indexMapping.get(d["Accepted"]),
-              value: 1
-          }); */}}
-
           var gpa = d["GPA"];
           var gpaStatus; // Could make scale for this
+          var greVerbalScore = d["GRE_Verbal"]
+          var greVerbalStatus;
+          var greQuantScore = d["GRE_Quant"]
+          var greQuantStatus;
+          var greWritingScore = d["GRE_Writing"]
+          var greWritingStatus;
+
+
+          // Can make this cleaner later
           if (gpa > 3.5) {
               gpaStatus = "High GPA"
           } else if (gpa > 3.0 && gpa <= 3.5) {
@@ -186,11 +189,6 @@
           } else {
               gpaStatus = "Low GPA"
           }
-
-          var greVerbalScore = d["GRE_Verbal"]
-          var greVerbalStatus;
-          var greQuantScore = d["GRE_Quant"]
-          var greQuantStatus;
 
           if (greQuantScore > 158.0) {
               greQuantStatus = "High GRE Verbal";
@@ -201,17 +199,22 @@
           }
 
           if (greVerbalScore > 158.0) {
-              greVerbalStatus = "High GRE Verbal";
+              greVerbalStatus = "High GRE Quant";
           } else if (greVerbalScore > 151.0 && greVerbalScore <= 158.0) {
-              greVerbalStatus = "Average GRE Verbal";
+              greVerbalStatus = "Average GRE Quant";
           } else {
-              greVerbalStatus = "Low GRE Verbal"
+              greVerbalStatus = "Low GRE Quant"
           }
-          {{/* console.log("NOW HERE")
-          console.log(greVerbalStatus) */}}
+
+          if (greWritingScore > 4.5) {
+              greWritingStatus = "High GRE Writing";
+          } else if (greWritingScore > 4 && greWritingScore <= 4.5) {
+              greWritingStatus = "Average GRE Writing";
+          } else {
+              greWritingStatus = "Low GRE Writing"
+          }
 
           console.log(greQuantStatus);
-          {{/* var gpa = d[" */}}
           links.push({
               source: indexMapping.get("Cornell"),
               target: indexMapping.get(gpaStatus),
@@ -220,36 +223,21 @@
               source: indexMapping.get(gpaStatus),
               target: indexMapping.get(greVerbalStatus),
               value: 1000
-          },{
-              source: indexMapping.get(greVerbalStatus),
-              target: indexMapping.get(d["Accepted"]),
-              value: 1000
-          });
-
-          {{/* links.push({
+          },
+          {
               source: indexMapping.get(greVerbalStatus),
               target: indexMapping.get(greQuantStatus),
               value: 1000              
-          }) */}}
-
-          {{/* {
-              source: indexMapping.get(greVerbalStatus),
-              target: indexMapping.get(greQuantStatus),
-              value: 1
-          } */}}
-
-
-          {{/* if (gpaStatus === "High GPA" && greVerbalStatus === "High GRE Verbal"){
-              console.log("BOTH HIGH");
-          } */}}
-
-          {{/* console.log(gpaStatus);
-          console.log(greVerbalScore); */}}
-          {{/* if (gpaStatus === "High GPA" && greVerbalStatus === "High GRE Verbal"){
-              console.log("BOTH HIGH");
-          } */}}
-
-
+          },
+          {
+              source: indexMapping.get(greQuantStatus),
+              target: indexMapping.get(greWritingStatus),
+              value: 1000
+          },{
+              source: indexMapping.get(greWritingStatus),
+              target: indexMapping.get(d["Accepted"]),
+              value: 1000
+          });
       });
 
       const sankey = d3.sankey()
@@ -299,13 +287,6 @@
       .attr("dy", "0.35em")
       .attr("text-anchor", d => d.x0 < WIDTH / 2 ? "start" : "end")
       .text(d => d.name);
-
-
-      
-      
-
-
-
 
       {{/* var link = admissionChance.append("g").selectAll(".link")
         .data(links)
