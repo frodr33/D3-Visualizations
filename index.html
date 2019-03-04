@@ -359,8 +359,12 @@
       console.log(links)
 
       graph = sankey({nodes, links})
+      const color = d3.scaleOrdinal(d3.schemeCategory10);
+      let idx = 0;
+      const calcColor = () => {
+        return color(idx++);
+      }
 
-      console.log(graph.links);
       admissionChance.append("g")
         .attr("stroke", "#000")
         .selectAll("rect")
@@ -370,6 +374,7 @@
         .attr("y", d => d.y0)
         .attr("height", d => (d.y1 - d.y0))
         .attr("width", d => d.x1 - d.x0)
+        .attr("fill", d => calcColor())
         .append("title")
         .text(d => d.name)
 
