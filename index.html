@@ -119,11 +119,6 @@
         .attr("height", HEIGHT)
         .attr("id", "testScoreSVG");
 
-      admissionChance = d3.select('div#vis2').append("svg")
-        .attr("width", 1300)
-        .attr("height", 1300)
-        .attr("id", "svgAdmissions")
-
       // scales
       let xScale = d3.scaleLinear()
         .domain(TOEFLMinMax)
