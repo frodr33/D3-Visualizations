@@ -77,7 +77,7 @@
       admissionChance = d3.select('div#vis2').append("svg")
         .attr("width", 1300)
         .attr("height", 1300)
-        .attr("id", "svgAdmissions");
+        .attr("id", "svgAdmissions")
 
       // axes
       let xScale = d3.scaleLinear()
@@ -134,7 +134,6 @@
       var cornellData = await d3.csv("datasets/cornellAdmissions.csv");
 
       cornellData.forEach((d) => {
-
           if (d["Accepted"] != "Rejected" && d["Accepted"] != "Accepted"){
               d["Accepted"] = "Rejected" 
           }
@@ -146,6 +145,8 @@
 
       const nodeNames = [
           "Cornell", 
+          "Yale", 
+          "Berkeley", 
           "High GPA",
           "Average GPA",
           "Low GPA",
@@ -162,7 +163,6 @@
           "Rejected",
           ];
 
-
       let indexMapping = new Map(nodeNames.map((d,i) => [d,i]));
       let nodes = [];
       nodeNames.forEach((nodeName) => {
@@ -171,6 +171,7 @@
 
       let links = [];
       cornellData.forEach((d) => {
+          var school = d["College"]
           var gpa = d["GPA"];
           var gpaStatus; // Could make scale for this
           var greVerbalScore = d["GRE_Verbal"]
@@ -189,7 +190,7 @@
           } else {
               gpaStatus = "Low GPA"
           }
-
+          
           if (greQuantScore > 158.0) {
               greQuantStatus = "High GRE Verbal";
           } else if (greQuantScore > 151.0 && greQuantScore <= 158.0) {
@@ -214,39 +215,75 @@
               greWritingStatus = "Low GRE Writing"
           }
 
-          console.log(greQuantStatus);
           links.push({
-              source: indexMapping.get("Cornell"),
+              source: indexMapping.get(school),
               target: indexMapping.get(gpaStatus),
-              value: 1000
+              school: school,
+              value: 1
           },{
               source: indexMapping.get(gpaStatus),
               target: indexMapping.get(greVerbalStatus),
-              value: 1000
+              school: school,
+              value: 1
           },
           {
               source: indexMapping.get(greVerbalStatus),
               target: indexMapping.get(greQuantStatus),
-              value: 1000              
+              school: school,
+              value: 1              
           },
           {
               source: indexMapping.get(greQuantStatus),
               target: indexMapping.get(greWritingStatus),
-              value: 1000
+              school: school,
+              value: 1
           },{
               source: indexMapping.get(greWritingStatus),
               target: indexMapping.get(d["Accepted"]),
-              value: 1000
+              school: school,
+              value: 1
           });
       });
+
+    
+
+      {{/* var links = []
+      var m = new Map();
+      rawLinks.forEach((d) => {
+        var key = d.source+d.target+d.school;
+        var val = m.get(key)
+        if (val == null){
+          m.set((key),{
+            value: 1,
+            school: d.school,
+            source: d.source,
+            target: d.target
+          })
+        } 
+      })
+      let allPossibleLinks = [...m.keys()]
+      allPossibleLinks.forEach((key) => {
+        var obj = m.get(key);
+        links.push({
+            source: obj.source,
+            target: obj.target,
+            school: obj.school,
+            value: obj.value         
+        })
+      }) */}}
+
 
       const sankey = d3.sankey()
         .nodeWidth(15)
         .nodePadding(10)
-        .extent([[1, 1], [800 - 1, 800 - 5]]);
-        
+        .extent([[1, 30], [1200 - 1, 600 - 5]]);
+      
+      console.log(nodes)
+      console.log(links)
+
       graph = sankey({nodes, links})
-      console.log(graph);
+
+      console.log(graph.links);
       admissionChance.append("g")
         .attr("stroke","#000")
         .selectAll("rect")
@@ -254,54 +291,36 @@
         .join("rect")
         .attr("x", d => d.x0)
         .attr("y", d => d.y0)
-        .attr("height", d => d.y1 - d.y0)
+        .attr("height", d => (d.y1 - d.y0))
         .attr("width", d => d.x1 - d.x0)
         .append("title")
             .text(d => d.name)
 
-      const link = admissionChance.append("g")
-        .attr("fill","gray")
-        .attr("opacity",.25)
-        .attr("stroke-width",.25)
-        .selectAll("g")
-        .data(graph.links)
-        .join("g")
-
-      {{/* const gradient = link.append("linearGradient")
-        .attr("x1", d => d.source.x1)
-        .attr("x2", d => d.target.x0); */}}
-            
-      link.append("path")
-        .attr("d",d3.sankeyLinkHorizontal())
-    
-      link.append("title")
-        .text(d => `${d.source.name} → ${d.target.name}`);
-
       admissionChance.append("g")
+          .attr("fill", "none")
+          .attr("stroke-opacity", .6)
+        .selectAll("path")
+        .data(graph.links)
+        .join("path")
+        .attr("stroke","green")
+          .attr("d", d3.sankeyLinkHorizontal())
+
+          {{/* .attr("stroke", d => 
+              d.school === "Cornell" ? "Red"
+                : d.school ==="Berkeley" ? "Yellow"
+                : "Blue") */}}
+
+     sankey.update(graph);
+
+     admissionChance.append("g")
       .style("font", "10px sans-serif")
       .selectAll("text")
       .data(nodes)
       .join("text")
       .attr("x", d => d.x0 < WIDTH / 2 ? d.x1 + 6 : d.x0 - 6)
       .attr("y", d => (d.y1 + d.y0) / 2)
-      .attr("dy", "0.35em")
       .attr("text-anchor", d => d.x0 < WIDTH / 2 ? "start" : "end")
       .text(d => d.name);
-
-      {{/* var link = admissionChance.append("g").selectAll(".link")
-        .data(links)
-        .enter().append("path")
-        .attr("class","link")
-        .attr("d",path)
-        .style("stroke-width", 1)
-
-
-      var node = admissionChance.append("g").selectAll(".node")
-        .data(nodes)
-        .enter().append("g")
-        .attr("class","node")
-        .attr("transform", (d) => {
-            return "translate(" + d.x + "," + d.y + ")";}) */}}
     }
 
     { {/* columns: (9) ["Serial No.", "GRE Score", "TOEFL Score", "University Rating", "SOP", "LOR ", "CGPA", "Research", "Chance of Admit "] */ } }
