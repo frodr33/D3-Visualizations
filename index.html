@@ -332,13 +332,13 @@
       let graph = sankey({ nodes, links })
 
       {{/* const color = d3.scaleOrdinal(d3.schemeSet2  ); */}}
-      let idx = 0;
+      {{/* let idx = 0;
       const calcColor = (d) => {
         let fill = d.name === "Cornell" ? "rgb(179, 27, 27)" 
         : d.name === "Berkeley" ? "#FDB515" 
         : d.name === "Yale" ? "rgb(15, 77, 146)" : "gray"; 
         return fill;
-      }
+      } */}}
       graduateDecisions.append("g")
         .attr("stroke", "black")
         .attr("class", "sectors")
@@ -349,7 +349,9 @@
         .attr("y", d => d.y0)
         .attr("height", d => (d.y1 - d.y0))
         .attr("width", d => d.x1 - d.x0)
-        .attr("fill", d => calcColor(d))
+        .attr("fill", d => d.name === "Cornell" ? "rgb(179, 27, 27)" 
+        : d.name === "Berkeley" ? "#FDB515" 
+        : d.name === "Yale" ? "rgb(15, 77, 146)" : "gray")
         .append("title")
         .text(d => d.name)
 
