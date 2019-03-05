@@ -472,7 +472,6 @@
         addNodeSize(greDecisions, grp)
 
         // add labels
-<<<<<<< HEAD
         const addLabels = (svg, greVgpa) => {
           let label = svg.append("g")
             .attr("transform", "translate(340,820)")
@@ -493,28 +492,6 @@
         }
         addLabels(graduateDecisions,"GPA");
         addLabels(greDecisions,"GRE");
-=======
-        let label = graduateDecisions.append("g")
-          .attr("transform", "translate(340,770)")
-          .style("font-size", 18)
-          .style('font-weight', 'bold');
-        label.append("g")
-          .attr("transform", "translate(0,0)")
-          .append('text')
-          .text("Graduate School");
-        label.append("g")
-          .attr("transform", "translate(310,0)")
-          .append("text")
-          .text("GPA");
-        label.append("g")
-          .attr("transform", "translate(625,0)")
-          .append("text")
-          .text("GRE");
-        label.append("g")
-          .attr("transform", "translate(925,0)")
-          .append("text")
-          .text("Decision");
->>>>>>> bb37c664e3fbe6169d974f47b9a623f910053ae6
       }
 
       // visualize
