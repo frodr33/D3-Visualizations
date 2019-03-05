@@ -325,7 +325,6 @@
         let graph = sankey({ nodes, links });
         console.log(graph);
 
-
         var applicantNode = graph.nodes[0]
         var displacement = 79;
         applicantNode.y0 += displacement;
@@ -354,15 +353,6 @@
               : d.name === "Berkeley" ? "#FDB515"
                 : d.name === "Yale" ? "rgb(15, 77, 146)" : "gray")
 
-
-        {{/* const linkGradient = (d) => {
-          if (d.source.name === "Applicants" && d.target.name === "Cornell") return "url(#redGradient)";
-          else if (d.source.name === "Applicants" && d.target.name === "Berkeley") return "url(#yellowGradient)";
-          else if (d.source.name === "Applicants" && d.target.name === "Yale") return "url(#blueGradient)";
-          else return d.color;
-        } */}}
-
-
         const link = graduateDecisions.append("g")
           .attr("fill", "none")
           .selectAll("path")
@@ -372,6 +362,7 @@
           .attr("opacity", 0.3)
           .attr("d", d3.sankeyLinkHorizontal());
 
+        // Red, Blue, and Yellow gradients
         let redGradient = graduateDecisions.append('defs')
           .append('linearGradient')
           .attr('id', 'redGradient')
@@ -381,7 +372,6 @@
         redGradient.append('stop')
           .attr("stop-color", "rgb(179, 27, 27)")
           .attr('offset', '100%');
-
         let yellowGradient = graduateDecisions.append('defs')
           .append('linearGradient')
           .attr('id', 'yellowGradient')
@@ -391,7 +381,6 @@
         yellowGradient.append('stop')
           .attr("stop-color", "#FDB515")
           .attr('offset', '100%');
-
         let blueGradient = graduateDecisions.append('defs')
           .append('linearGradient')
           .attr('id', 'blueGradient')
@@ -425,14 +414,16 @@
           .attr("transform", "translate(70,820)")
           .style("font-size", 18)
           .style('font-weight','bold');
-        label.append("text")
+        label.append("g")
+          .attr("transform", "translate(290,0)")
+          .append('text')
           .text("Graduate School");
         label.append("g")
-          .attr("transform", "translate(390,0)")
+          .attr("transform", "translate(595,0)")
           .append("text")
           .text("GPA");
         label.append("g")
-          .attr("transform", "translate(800,0)")
+          .attr("transform", "translate(905,0)")
           .append("text")
           .text("GRE");
         label.append("g")
