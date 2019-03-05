@@ -369,7 +369,6 @@
         redGradient.append('stop')
           .attr("stop-color", "rgb(179, 27, 27)")
           .attr('offset', '100%');
-
         let yellowGradient = graduateDecisions.append('defs')
           .append('linearGradient')
           .attr('id', 'yellowGradient')
@@ -379,7 +378,6 @@
         yellowGradient.append('stop')
           .attr("stop-color", "#FDB515")
           .attr('offset', '100%');
-
         let blueGradient = graduateDecisions.append('defs')
           .append('linearGradient')
           .attr('id', 'blueGradient')
@@ -415,8 +413,10 @@
         let label = graduateDecisions.append("g")
           .attr("transform", "translate(340,770)")
           .style("font-size", 18)
-          .style('font-weight', 'bold');
-        label.append("text")
+          .style('font-weight','bold');
+        label.append("g")
+          .attr("transform", "translate(0,0)")
+          .append('text')
           .text("Graduate School");
         label.append("g")
           .attr("transform", "translate(310,0)")
