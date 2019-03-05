@@ -222,11 +222,6 @@
         .attr("transform", "rotate(90)")
         .text("CGPA");
 
-
-
-
-
-
       WIDTH = 1300;
       HEIGHT = 1300;
       graduateDecisions = d3.select('div#vis2').append("svg")
@@ -247,7 +242,7 @@
       let GREQ = d3.extent(gradData, d => d.GRE_Quant);
       let GREV = d3.extent(gradData, d => d.GRE_Verbal);
       let GREW = d3.extent(gradData, d => d.GRE_Writing)
-      gpaScale = d3.scaleLinear().domain(GPAMinMax).range([1, 4]);
+      gpaScale = d3.scaleLinear().domain(GPAMinMax).range([.1, 4]);
       let GREQScale = d3.scaleLinear().domain(GREQ).range([0.1, 3]);
       let GREVScale = d3.scaleLinear().domain(GREV).range([0.1, 3]);
       let GREWScale = d3.scaleLinear().domain(GREW).range([0.1, 3]);
@@ -263,8 +258,10 @@
         "Cornell",
         "Yale",
         "Berkeley",
-        "< 5",
         "< 4",
+        "< 3.75",
+        "< 3.5",
+        "< 3.25",
         "< 3",
         "< 2",
         "< 1",
@@ -289,7 +286,8 @@
       gradData.forEach((d, i) => {
         let college = d.College;
         let fill = college === "Cornell" ? "red" : college === "Berkeley" ? "yellow" : "blue";
-        let gpa = '< ' + Math.ceil(gpaScale(d.GPA));
+        let gpa = '< ';
+        {{/* let gpa = '< ' + Math.ceil(gpaScale(d.GPA)); */}}
         const q = Math.ceil(GREQScale(d.GRE_Quant));
         let quant = (q == 1 ? 'Low ' : q == 2 ? 'Average ' : 'High ') + 'GRE Quant';
         const v = Math.ceil(GREVScale(d.GRE_Verbal));
@@ -298,6 +296,12 @@
         let writing = (w == 1 ? 'Low ' : w == 2 ? 'Average ' : 'High ') + 'GRE Writing';
         let decision = d.Accepted;
 
+        if (d.GPA < 3.0) gpa += Math.ceil(gpaScale(d.GPA));
+        else if (d.GPA < 3.25) gpa += '3.25';
+        else if (d.GPA < 3.5) gpa += '3.5';
+        else if (d.GPA < 3.75) gpa += '3.75';
+        else if (d.GPA <= 4) gpa += '4';
+        
         links.push(
           {
             source: indexMapping.get(college),
