@@ -1,10 +1,6 @@
 <head>
   <script src="https://d3js.org/d3.v5.min.js"></script>
-  <!-- d3-sankey imports -->
-  <script src="https://unpkg.com/d3-array@1"></script>
-  <script src="https://unpkg.com/d3-collection@1"></script>
-  <script src="https://unpkg.com/d3-path@1"></script>
-  <script src="https://unpkg.com/d3-shape@1"></script>
+  <!-- d3-sankey import -->
   <script src="https://unpkg.com/d3-sankey@0"></script>
 </head>
 
@@ -321,7 +317,7 @@
         const sankey = d3.sankey()
           .nodeWidth(36)
           .nodePadding(80)
-          .extent([[0, 15], [1300, 800]])
+          .extent([[0, 15], [1300, 750]])
           .iterations(0);
         let graph = sankey({ nodes, links });
 
@@ -417,7 +413,7 @@
 
         // add labels
         let label = graduateDecisions.append("g")
-          .attr("transform", "translate(340,820)")
+          .attr("transform", "translate(340,770)")
           .style("font-size", 18)
           .style('font-weight', 'bold');
         label.append("text")
