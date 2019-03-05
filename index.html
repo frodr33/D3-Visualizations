@@ -11,7 +11,7 @@
   <style>
     body {
       font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
-      background-color: rgb(183, 167, 231);
+      background-color: rgb(211, 211, 211);
     }
 
     h1#about {
@@ -254,9 +254,9 @@
 
       // populate nodes
       let names = [
-        "Yale",
-        "Berkeley",
         "Cornell",
+        "Berkeley",
+        "Yale",
         "< 4",
         "< 3.75",
         "< 3.5",
@@ -347,10 +347,13 @@
       console.log(links);
       let graph = sankey({ nodes, links })
 
-      const color = d3.scaleOrdinal(d3.schemeCategory10);
+      const color = d3.scaleOrdinal(d3.schemeSet2  );
       let idx = 0;
-      const calcColor = () => {
-        return color(idx++);
+      const calcColor = (d) => {
+        let fill = d.name === "Cornell" ? "rgb(179, 27, 27)" 
+        : d.name === "Berkeley" ? "#FDB515" 
+        : d.name === "Yale" ? "rgb(15, 77, 146)" : "gray"; 
+        return fill;
       }
       graduateDecisions.append("g")
         .attr("stroke", "#000")
@@ -361,7 +364,7 @@
         .attr("y", d => d.y0)
         .attr("height", d => (d.y1 - d.y0))
         .attr("width", d => d.x1 - d.x0)
-        .attr("fill", d => calcColor())
+        .attr("fill", d => calcColor(d))
         .append("title")
         .text(d => d.name)
 
@@ -372,7 +375,7 @@
         .data(graph.links)
         .join("path")
         .attr("stroke", d => d.color)
-        .attr("opacity", 0.4)
+        .attr("opacity", 0.3)
         .attr("d", d3.sankeyLinkHorizontal())
 
       graduateDecisions.append("g")
