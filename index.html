@@ -86,6 +86,8 @@
 
   <script>
     const requestData = async () => {
+
+      /******   FIRST VISUALIZATION   ******/
       let universityData = await d3.csv('datasets/admissions.csv');
       let WIDTH = 1050;
       let HEIGHT = 700;
@@ -218,10 +220,7 @@
         .text("CGPA");
 
 
-
-
-
-
+      /******   SECOND VISUALIZATION   ******/
       WIDTH = 1300;
       HEIGHT = 1300;
       graduateDecisions = d3.select('div#vis2').append("svg")
@@ -255,9 +254,9 @@
 
       // populate nodes
       let names = [
-        "Cornell",
         "Yale",
         "Berkeley",
+        "Cornell",
         "< 5",
         "< 4",
         "< 3",
@@ -283,7 +282,7 @@
       links = [];
       gradData.forEach((d, i) => {
         let college = d.College;
-        let fill = college === "Cornell" ? "red" : college === "Berkeley" ? "yellow" : "blue";
+        let fill = college === "Cornell" ? "rgb(179, 27, 27)" : college === "Berkeley" ? "#FDB515" : "rgb(15, 77, 146)";
         let gpa = '< ' + Math.ceil(gpaScale(d.GPA));
         const q = Math.ceil(GREQScale(d.GRE_Quant));
         let quant = (q == 1 ? 'Low ' : q == 2 ? 'Average ' : 'High ') + 'GRE Quant';
@@ -355,11 +354,11 @@
       console.log(links)
       graduateDecisions.append("g")
         .attr("fill", "none")
-        .attr("stroke-opacity", .6)
         .selectAll("path")
         .data(graph.links)
         .join("path")
         .attr("stroke", d => d.color)
+        .attr("opacity", 0.4)
         .attr("d", d3.sankeyLinkHorizontal())
 
       graduateDecisions.append("g")
