@@ -348,14 +348,12 @@
 
         });
 
-        console.log("MADE IT HERE")
         // initialize sankey with dimensions
         const sankey = d3.sankey()
           .nodeWidth(36)
           .nodePadding(80)
           .extent([[0, 15], [1300, 750]])
           .iterations(0);
-
 
         let graph = sankey({ nodes, links });
         nodes = greNodes;
