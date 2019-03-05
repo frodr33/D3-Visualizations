@@ -48,6 +48,7 @@
     .sectors rect {
       border-radius: 25px;
       padding: 20px;
+      /* stroke: black; */
     }
   </style>
 
@@ -235,8 +236,8 @@
       // populate nodes
       let names = [
         "Berkeley",
-        "Yale",
         "Cornell",
+        "Yale",
         "< 4",
         "< 3.9",
         "< 3.7",
@@ -303,17 +304,16 @@
         .nodePadding(30)
         .extent([[50, 50], [1300, 800]])
         .iterations(0);
-      let graph = sankey({ nodes, links })
+      let graph = sankey({ nodes, links });
 
       const calcColor = d => {
         return
         d.name === "Cornell" ? "rgb(179, 27, 27)"
           : d.name === "Berkeley" ? "#FDB515"
             : d.name === "Yale" ? "rgb(15, 77, 146)" : "gray";
-      }
+      };
 
       graduateDecisions.append("g")
-        .attr("stroke", "black")
         .attr("class", "sectors")
         .selectAll("rect")
         .data(graph.nodes)
@@ -322,11 +322,12 @@
         .attr("y", d => d.y0)
         .attr("height", d => (d.y1 - d.y0))
         .attr("width", d => d.x1 - d.x0)
-        .attr("fill", d => d.name === "Cornell" ? "rgb(179, 27, 27)"
-          : d.name === "Berkeley" ? "#FDB515"
-            : d.name === "Yale" ? "rgb(15, 77, 146)" : "gray")
+        .attr("fill", d =>
+          d.name === "Cornell" ? "rgb(179, 27, 27)"
+            : d.name === "Berkeley" ? "#FDB515"
+              : d.name === "Yale" ? "rgb(15, 77, 146)" : "gray")
         .append("title")
-        .text(d => d.name)
+        .text(d => d.name);
 
       graduateDecisions.append("g")
         .attr("fill", "none")
@@ -335,10 +336,9 @@
         .join("path")
         .attr("stroke", d => d.color)
         .attr("opacity", 0.3)
-        .attr("d", d3.sankeyLinkHorizontal())
+        .attr("d", d3.sankeyLinkHorizontal());
 
       graduateDecisions.append("g")
-        .style("font", "10px sans-serif")
         .selectAll("text")
         .data(nodes)
         .join("text")
