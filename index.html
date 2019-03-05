@@ -333,7 +333,7 @@
         .join("path")
         .attr("stroke", d => d.color)
         .attr("opacity", 0.3)
-        .attr("d", d3.sankeyLinkHorizontal().curve(d3.curveNatural()))
+        .attr("d", d3.sankeyLinkHorizontal())
 
       graduateDecisions.append("g")
         .style("font", "10px sans-serif")
