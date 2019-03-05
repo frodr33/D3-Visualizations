@@ -254,9 +254,9 @@
         "High GRE Quant",
         "Low GRE Quant",
         "Average GRE Quant",
-        "Average GRE Writing",
-        "Low GRE Writing",
         "High GRE Writing",
+        "Low GRE Writing",
+        "Average GRE Writing",
         "Accepted",
         "Rejected",
       ];
@@ -326,11 +326,12 @@
 
       const sankey = d3.sankey()
         .nodeWidth(36)
-        .nodePadding(10)
-        .extent([[20, 20], [1200 - 1, 600 - 5]]);
+        .nodePadding(30)
+        .extent([[0, 50], [1200 - 1, 800 - 5]])
+        .iterations(0);
       let graph = sankey({ nodes, links })
 
-      const color = d3.scaleOrdinal(d3.schemeSet2  );
+      {{/* const color = d3.scaleOrdinal(d3.schemeSet2  ); */}}
       let idx = 0;
       const calcColor = (d) => {
         let fill = d.name === "Cornell" ? "rgb(179, 27, 27)" 
