@@ -33,6 +33,12 @@
       display: block;
     }
 
+    div#vis3 {
+      text-align: center;
+      text-anchor: middle;
+      display: block;
+    }
+
     .gridlines line {
       stroke: #504E48;
       stroke-width: 0.5;
@@ -219,7 +225,7 @@
 
         /******   SECOND VISUALIZATION   ******/
         WIDTH = 1350;
-        HEIGHT = 1000;
+        HEIGHT = 850;
         graduateDecisions = d3.select('div#vis2').append("svg")
           .attr("width", WIDTH)
           .attr("height", HEIGHT)
@@ -249,11 +255,11 @@
           "Berkeley",
           "Cornell",
           "Yale",
-          "< 3.7",
           "3.9 - 4.0",
           "3.7 - 3.9",
-          "Rejected",
+          "< 3.7",
           "Accepted",
+          "Rejected",
         ];
 
         let greNames = [
@@ -273,7 +279,7 @@
         let indexMapping = new Map(names.map((d, i) => [d, i]));
         let indexMappingGre = new Map(greNames.map((d, i) => [d, i]));
         names.forEach(d => nodes.push({ name: d }));
-        greNames.forEach(d => greNodes.push({ name:d }));
+        greNames.forEach(d => greNodes.push({ name: d }));
 
         // populate links
         links = [];
@@ -293,7 +299,7 @@
                 : 'Average/Below Average Scores'
           let decision = d.Accepted;
           let gpa;
-          if (d.GPA <  3.7) gpa = '< 3.7';
+          if (d.GPA < 3.7) gpa = '< 3.7';
           else if (d.GPA < 3.9) gpa = '3.7 - 3.9';
           else if (d.GPA <= 4) gpa = '3.9 - 4.0';
 
@@ -374,11 +380,10 @@
           }
           if (link.target.name === "Yale") link.color = "url(#blueGradient)";
           else if (link.target.name === "Berkeley") link.color = "url(#yellowGradient)";
-          else if (link.target.name === "Cornell") link.color = "url(#redGradient)";          
+          else if (link.target.name === "Cornell") link.color = "url(#redGradient)";
         }
         graph.links.forEach(updateNodes);
         grp.links.forEach(updateNodes);
-
 
         // Add nodes for gpa sankey
         const drawSankey = (svg, sankeyGraph) => {
@@ -403,7 +408,7 @@
             .join("path")
             .attr("stroke", d => d.color)
             .attr("opacity", 0.3)
-            .attr("d", d3.sankeyLinkHorizontal());          
+            .attr("d", d3.sankeyLinkHorizontal());
         }
         drawSankey(graduateDecisions, graph);
         drawSankey(greDecisions, grp)
@@ -454,7 +459,7 @@
         // add node size
         const addNodeSize = (svg, sankeyGraph) => {
           const offset = (d) => {
-            return (d.name === "Applicants") ? 35  : 30;
+            return (d.name === "Applicants") ? 35 : 30;
           }
           svg.append("g")
             .selectAll("text")
@@ -464,7 +469,7 @@
             .attr("y", d => d.y0 + 15)
             .attr("text-anchor", d => d.x0 < WIDTH / 2 ? "start" : "end")
             .text(d => (d.name === "Accepted" || d.name === "Rejected") ?
-              d.targetLinks.length : d.sourceLinks.length);          
+              d.targetLinks.length : d.sourceLinks.length);
         }
         addNodeSize(graduateDecisions, graph)
         addNodeSize(greDecisions, grp)
@@ -472,9 +477,9 @@
         // add labels
         const addLabels = (svg, greVgpa) => {
           let label = svg.append("g")
-            .attr("transform", "translate(340,820)")
+            .attr("transform", "translate(340,790)")
             .style("font-size", 18)
-            .style('font-weight','bold');
+            .style('font-weight', 'bold');
           label.append("g")
             .attr("transform", "translate(90,0)")
             .append('text')
@@ -488,8 +493,8 @@
             .append("text")
             .text("Decision");
         }
-        addLabels(graduateDecisions,"GPA");
-        addLabels(greDecisions,"GRE");
+        addLabels(graduateDecisions, "GPA");
+        addLabels(greDecisions, "GRE");
       }
 
       // visualize
