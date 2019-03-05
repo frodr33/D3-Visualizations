@@ -39,25 +39,8 @@
       stroke: none;
     }
 
-    .node rect {
-      cursor: move;
-      fill-opacity: .9;
-      shape-rendering: crispEdges;
-    }
-
-    .node text {
-      pointer-events: none;
-      text-shadow: 0 1px 0 #fff;
-    }
-
-    .link {
-      fill: none;
-      stroke: #000;
-      stroke-opacity: .2;
-    }
-
-    .link:hover {
-      stroke-opacity: .5;
+    rect {
+      border-radius: 2;
     }
   </style>
 
@@ -230,7 +213,6 @@
 
       let gradData = await d3.csv('datasets/cornellAdmissions.csv');
       gradData = gradData.filter(d => (d.Accepted === 'Accepted' || d.Accepted === 'Rejected') && d.GPA <= 4.0);
-      console.log(gradData);
       gradData.forEach(d => {
         d["GPA"] = Number(d["GPA"]);
         d["GRE_Verbal"] = Number(d["GRE_Verbal"]);
@@ -245,10 +227,7 @@
       let GREQScale = d3.scaleLinear().domain(GREQ).range([0.1, 3]);
       let GREVScale = d3.scaleLinear().domain(GREV).range([0.1, 3]);
       let GREWScale = d3.scaleLinear().domain(GREW).range([0.1, 3]);
-      console.log(GPAMinMax, GREV, GREQ, GREW);
 
-
-      margin = { top: 20, left: 70, bottom: 50, right: 100 };
       chartWidth = WIDTH - margin.left - margin.right;
       chartHeight = HEIGHT - margin.top - margin.bottom;
 
@@ -329,8 +308,6 @@
         .nodeWidth(36)
         .nodePadding(10)
         .extent([[20, 20], [1200 - 1, 600 - 5]]);
-
-      console.log(links);
       let graph = sankey({ nodes, links })
 
       const color = d3.scaleOrdinal(d3.schemeCategory10);
@@ -339,7 +316,7 @@
         return color(idx++);
       }
       graduateDecisions.append("g")
-        .attr("stroke", "#000")
+        .attr("stroke", "black")
         .selectAll("rect")
         .data(graph.nodes)
         .join("rect")
@@ -351,7 +328,6 @@
         .append("title")
         .text(d => d.name)
 
-      console.log(links)
       graduateDecisions.append("g")
         .attr("fill", "none")
         .selectAll("path")
@@ -372,7 +348,7 @@
         .text(d => d.name);
     }
 
-    /* columns: (9) ["Serial No.", "GRE Score", "TOEFL Score", "University Rating", "SOP", "LOR ", "CGPA", "Research", "Chance of Admit "] */
+    // visualize
     requestData();
   </script>
 </body>
