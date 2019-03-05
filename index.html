@@ -322,7 +322,9 @@
         .attr("y", d => d.y0)
         .attr("height", d => (d.y1 - d.y0))
         .attr("width", d => d.x1 - d.x0)
-        .attr("fill", d => calcColor(d))
+        .attr("fill", d => d.name === "Cornell" ? "rgb(179, 27, 27)"
+          : d.name === "Berkeley" ? "#FDB515"
+            : d.name === "Yale" ? "rgb(15, 77, 146)" : "gray")
         .append("title")
         .text(d => d.name)
 
