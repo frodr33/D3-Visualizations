@@ -86,6 +86,8 @@
 
   <script>
     const requestData = async () => {
+
+      /******   FIRST VISUALIZATION   ******/
       let universityData = await d3.csv('datasets/admissions.csv');
       let WIDTH = 1050;
       let HEIGHT = 700;
@@ -118,11 +120,6 @@
         .attr("width", WIDTH)
         .attr("height", HEIGHT)
         .attr("id", "testScoreSVG");
-
-      admissionChance = d3.select('div#vis2').append("svg")
-        .attr("width", 1300)
-        .attr("height", 1300)
-        .attr("id", "svgAdmissions")
 
       // scales
       let xScale = d3.scaleLinear()
@@ -222,6 +219,8 @@
         .attr("transform", "rotate(90)")
         .text("CGPA");
 
+
+      /******   SECOND VISUALIZATION   ******/
       WIDTH = 1300;
       HEIGHT = 1300;
       graduateDecisions = d3.select('div#vis2').append("svg")
@@ -255,9 +254,9 @@
 
       // populate nodes
       let names = [
-        "Cornell",
         "Yale",
         "Berkeley",
+        "Cornell",
         "< 4",
         "< 3.75",
         "< 3.5",
@@ -285,9 +284,8 @@
       links = [];
       gradData.forEach((d, i) => {
         let college = d.College;
-        let fill = college === "Cornell" ? "red" : college === "Berkeley" ? "yellow" : "blue";
-        let gpa = '< ';
-        {{/* let gpa = '< ' + Math.ceil(gpaScale(d.GPA)); */}}
+        let fill = college === "Cornell" ? "rgb(179, 27, 27)" : college === "Berkeley" ? "#FDB515" : "rgb(15, 77, 146)";
+        let gpa = '< ' + Math.ceil(gpaScale(d.GPA));
         const q = Math.ceil(GREQScale(d.GRE_Quant));
         let quant = (q == 1 ? 'Low ' : q == 2 ? 'Average ' : 'High ') + 'GRE Quant';
         const v = Math.ceil(GREVScale(d.GRE_Verbal));
@@ -364,11 +362,11 @@
       console.log(links)
       graduateDecisions.append("g")
         .attr("fill", "none")
-        .attr("stroke-opacity", .6)
         .selectAll("path")
         .data(graph.links)
         .join("path")
         .attr("stroke", d => d.color)
+        .attr("opacity", 0.4)
         .attr("d", d3.sankeyLinkHorizontal())
 
       graduateDecisions.append("g")
