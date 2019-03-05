@@ -1,5 +1,6 @@
 <head>
   <script src="https://d3js.org/d3.v5.min.js"></script>
+  <!-- d3-sankey imports -->
   <script src="https://unpkg.com/d3-array@1"></script>
   <script src="https://unpkg.com/d3-collection@1"></script>
   <script src="https://unpkg.com/d3-path@1"></script>
@@ -45,7 +46,7 @@
       stroke: none;
     }
 
-    .sectors rect {
+    #rects {
       border-radius: 25px;
       padding: 20px;
       /* stroke: black; */
@@ -212,14 +213,14 @@
 
 
       /******   SECOND VISUALIZATION   ******/
-      WIDTH = 1500;
+      WIDTH = 1350;
       HEIGHT = 1000;
       graduateDecisions = d3.select('div#vis2').append("svg")
         .attr("width", WIDTH)
         .attr("height", HEIGHT)
         .attr("id", "svgAdmissions");
 
-      let gradData = await d3.csv('datasets/cornellAdmissions.csv');
+      let gradData = await d3.csv('datasets/gradAdmissions.csv');
       // filter data and discretize decision values
       gradData = gradData.filter(d => (d.Accepted === 'Accepted' || d.Accepted === 'Rejected') && d.GPA <= 4.0);
       gradData.forEach(d => {
@@ -238,8 +239,8 @@
         "Berkeley",
         "Cornell",
         "Yale",
-        "< 4",
-        "< 3.9",
+        "3.9 - 4.0",
+        "3.7 - 3.9",
         "< 3.7",
         "Top Scores",
         "Competitive Scores",
@@ -255,8 +256,7 @@
       links = [];
       gradData.forEach((d, i) => {
         let college = d.College;
-        let fill = college === "Cornell" ? "rgb(179, 27, 27)" : college === "Berkeley" ? "#FDB515" : "rgb(15, 77, 146)";
-        let gpa = '< ';
+        let cFill = college === "Cornell" ? "rgb(179, 27, 27)" : college === "Berkeley" ? "#FDB515" : "rgb(15, 77, 146)";
         let score = d.GRE;
         // verbal + quantitative + writing
         let top = 163 + 165 + 5;
@@ -268,9 +268,10 @@
               : 'Average/Below Average Scores'
         let decision = d.Accepted;
 
-        if (d.GPA < 3.7) gpa += '3.7';
-        else if (d.GPA < 3.9) gpa += '3.9';
-        else if (d.GPA <= 4) gpa += '4';
+        let gpa;
+        if (d.GPA < 3.7) gpa = '< 3.7';
+        else if (d.GPA < 3.9) gpa = '3.7 - 3.9';
+        else if (d.GPA <= 4) gpa = '3.9 - 4.0';
 
         if (indexMapping.get(gpa) == null) {
           console.log(d.GPA);
@@ -278,31 +279,33 @@
           console.log(indexMapping.get(gpa));
         }
 
+        // create links to connect nodes
         links.push(
           {
             source: indexMapping.get(college),
             target: indexMapping.get(gpa),
-            value: i,
-            color: fill,
+            value: i / 2,
+            color: cFill,
           },
           {
             source: indexMapping.get(gpa),
             target: indexMapping.get(gre),
-            value: i,
-            color: fill,
+            value: i / 2,
+            color: cFill,
           },
           {
             source: indexMapping.get(gre),
             target: indexMapping.get(decision),
-            value: i,
-            color: fill,
-          });
+            value: i / 2,
+            color: cFill,
+          },
+        );
       });
 
       const sankey = d3.sankey()
         .nodeWidth(36)
-        .nodePadding(30)
-        .extent([[50, 50], [1300, 800]])
+        .nodePadding(80)
+        .extent([[0, 0], [1300, 800]])
         .iterations(0);
       let graph = sankey({ nodes, links });
 
@@ -314,7 +317,7 @@
       };
 
       graduateDecisions.append("g")
-        .attr("class", "sectors")
+        .attr("id", "rects")
         .selectAll("rect")
         .data(graph.nodes)
         .join("rect")
@@ -326,8 +329,6 @@
           d.name === "Cornell" ? "rgb(179, 27, 27)"
             : d.name === "Berkeley" ? "#FDB515"
               : d.name === "Yale" ? "rgb(15, 77, 146)" : "gray")
-        .append("title")
-        .text(d => d.name);
 
       graduateDecisions.append("g")
         .attr("fill", "none")

@@ -3,7 +3,7 @@ import csv
 with open('datasets/all_uisc_clean.csv') as uni_data:
     csv_reader = csv.reader(uni_data, delimiter=",")
     schoolRows = []
-    with open('datasets/cornellAdmissions.csv', mode='w', newline='') as colleges:
+    with open('datasets/gradAdmissions.csv', mode='w', newline='') as colleges:
         employee_writer = csv.writer(colleges, delimiter=',')
         employee_writer.writerow(["College", "Major","Accepted", "GPA", "GRE_Verbal", "GRE_Quant", "GRE_Writing"])          
         for row in csv_reader:
