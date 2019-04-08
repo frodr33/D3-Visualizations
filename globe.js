@@ -28,52 +28,8 @@ svg.append("path")
     .attr("d", path);
 
 const ready = async () => {
-  let world = await d3.json("world-110m.v1.json");
-  let names = await d3.tsv("world-country-names.tsv")
-  let land = await d3.csv("landForAgri.csv")
-  let landUse = {};
-  let landUseExtent = [100, 0] // min, max
-
-  console.log(land);
-
-  /* Deserializing csv into landUse object */
-  let lastArea = "Afghanistan";
-  let landUseInCountry = {}
-  land.forEach((d, _) => {
-    if (lastArea !== d.Area) {
-      // Hard coding differences in
-      if (lastArea == "United States of America") lastArea = "United States"
-      else if (lastArea == "Venezuela (Bolivarian Republic of)") lastArea = "Venezuela, Bolivarian Republic of"
-      else if (lastArea == "Czechia") lastArea = "Czech Republic"
-      else if (lastArea == "Bolivia (Plurinational State of)") lastArea = "Bolivia, Plurinational State of"
-      else if (lastArea == "C̫te d'Ivoire") lastArea = "Côte d'Ivoire"
-      else if (lastArea == "Iran (Islamic Republic of)") lastArea = "Iran, Islamic Republic of"
-      else if (lastArea == "Palestine") lastArea = "Palestinian Territory, Occupied"
-      else if (lastArea == "Sudan (former)") lastArea = "Sudan"
-      else if (lastArea == "Eswatini") lastArea = "Swaziland"
-      else if (lastArea == "Yugoslav SFR") lastArea = "Macedonia, the former Yugoslav Republic of" // There is also a North Macedonia lol
-      else if (lastArea == "United Republic of Tanzania") lastArea = "Tanzania, United Republic of"
-
-      landUse[lastArea] = landUseInCountry
-      
-      if (lastArea == "Congo") landUse["Congo, the Democratic Republic of the"] = landUseInCountry // Questionable
-      if (lastArea == "Sudan") landUse["South Sudan"] = landUseInCountry // Questionable
-      landUseInCountry = {}  
-    }
-    let val = parseFloat(d.Value)
-    landUseExtent[0] = val < landUseExtent[0] ? val : landUseExtent[0]
-    landUseExtent[1] = val > landUseExtent[1] ? val : landUseExtent[1]
-    landUseInCountry[d.Year] = val
-    lastArea = d.Area 
-  })
-  landUse[lastArea] = landUseInCountry  
-  console.log(landUse)
-  console.log(landUseExtent)
-
-  /* Country color scale*/
-  let colorScale = d3.scaleSequential(d3.interpolateBlues)
-    .domain(landUseExtent)
-
+  world = await d3.json("world-110m.v1.json");
+  names = await d3.tsv("world-country-names.tsv")
   countries = topojson.feature(world, world.objects.countries).features;
   names.forEach((d) => {
       countryMap.set(parseInt(d["id"]), d["name"]);
@@ -90,19 +46,12 @@ const ready = async () => {
 
   // There is an undefined here, must filter stuff first
   countries.forEach((country) => {
-      let id = parseInt(country.id);
-      let name = countryMap.get(id); // Filter out bad ones...
-      
-      // console.log(name)
+    //   console.log(country);
+      id = parseInt(country.id);
 
-      if (!landUse[name]) {
-        console.log(name)
-      }
-
-      // colorScale[landUse[name]["2000"]]
       svg.insert("path", ".graticule")
         .datum(country)
-        .attr("fill", landUse[name] ?  colorScale(landUse[name]["2000"]): "lightgray")
+        .attr("fill", colors.clickable)
         .attr("d", path)
         .attr("class", "clickable")
         .attr("country-id", id)
@@ -126,13 +75,12 @@ const ready = async () => {
             }
         })
         .on("mouseout", function(country) {
-            let name = countryMap.get(parseInt(country.id))
             var c = d3.select(this);
             if (c.classed("clicked")) {
               c.attr("fill", colors.clicked);
               selectedCountry = countryMap.get(country.id);
             } else {
-              d3.select(this).attr("fill", landUse[name] ?  colorScale(landUse[name]["2000"]): "white");
+              d3.select(this).attr("fill", colors.clickable);
             }
         });
   })
