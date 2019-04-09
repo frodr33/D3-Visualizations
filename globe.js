@@ -197,7 +197,7 @@ function redraw() {
     .each(function(d, _) {
       id = parseInt(d3.select(this).attr("country-id"))
       name = countryMap.get(id)
-      console.log(name)
+      // console.log(name)
       // console.log(d3.select(this).attr("country-id"))
 
       // console.log(d3.select(this))
@@ -254,7 +254,6 @@ var slider = d3.sliderHorizontal()
 .on('onchange', val => {
   currentYear = val.toString();
   redraw();
-  console.log(currentYear)
 });
 
 var start = WIDTH/3 - sliderWidth/2;
