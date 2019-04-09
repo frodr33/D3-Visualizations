@@ -13,7 +13,7 @@ let colors = { clickable: 'green', hover: 'grey', clicked: "red", clickhover: "d
 let currentYear = 1970;
 
 var country= null;
-var svg = d3.select("#svg1").append("svg")
+var svg = d3.select("#svg1")
 .attr("width", WIDTH)
 .attr("height", HEIGHT)
 .attr("class", "svg");
@@ -184,12 +184,12 @@ function refresh() {
   svg.selectAll(".clickable").attr("d", path);
   svg.selectAll(".countries path").attr("d", path);
   svg.selectAll(".graticule").attr("d", path);
-  if (wasDragged) {
-    wasDragged = false;
-    setTimeout(() => {
-      startSpinning();
-    }, 3000)
-  }
+  // if (wasDragged) {
+  //   wasDragged = false;
+  //   setTimeout(() => {
+  //     startSpinning();
+  //   }, 3000)
+  // }
 }
 
 function redraw() {
@@ -260,3 +260,24 @@ var start = WIDTH/3 - sliderWidth/2;
 svg.append("g")
 .attr('transform', 'translate('+ start +',650)')
 .call(slider);
+
+/* Buttons */
+svg.select("#pauseButton")
+  .on("click", () => {stopSpinning();})
+
+svg.select("#playButton")
+  .on("click", () => {startSpinning();})
+  
+svg.select("lButton")
+  .on("click", () => {
+    console.log("CLICKED")
+})
+svg.select("#rButton")
+  .on("click", () => {
+    console.log("CLICKED")
+})
+// svg.append("Button")
+// .text("wiggle")
+// .on("click", () => {
+//   console.log("CLICKED")
+// });
