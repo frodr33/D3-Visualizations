@@ -18,10 +18,11 @@ var svg = d3.select("#svg1")
 .attr("height", HEIGHT)
 .attr("class", "svg");
 
-svg.call(d3.drag()
-.on("start", dragstarted)
-.on("drag", dragged)
-.on("end", dragEnded));
+// Dragging
+// svg.call(d3.drag()
+// .on("start", dragstarted)
+// .on("drag", dragged)
+// .on("end", dragEnded));
 
 svg.append("path")
 .datum(graticule)
@@ -220,28 +221,28 @@ const initSpin = () => {timer = d3.timer(rotate)}
 const stopSpinning = () => {timer.stop()}
 const startSpinning = () => {timer.restart(rotate)}
 
-function dragstarted() {
-  wasDragged = false;
-  timer.stop();
-  v0 = versor.cartesian(proj.invert(d3.mouse(this)));
-  r0 = proj.rotate();
-  q0 = versor(r0);
-  stopSpinning();
-}
+// function dragstarted() {
+//   wasDragged = false;
+//   timer.stop();
+//   v0 = versor.cartesian(proj.invert(d3.mouse(this)));
+//   r0 = proj.rotate();
+//   q0 = versor(r0);
+//   stopSpinning();
+// }
 
-function dragged() {
-  var v1 = versor.cartesian(proj.rotate(r0).invert(d3.mouse(this))),
-  q1 = versor.multiply(q0, versor.delta(v0, v1)),
-  r1 = versor.rotation(q1);
+// function dragged() {
+//   var v1 = versor.cartesian(proj.rotate(r0).invert(d3.mouse(this))),
+//   q1 = versor.multiply(q0, versor.delta(v0, v1)),
+//   r1 = versor.rotation(q1);
 
-  ROTATION[0] = r1[0];
-  proj.rotate(r1);
-}
+//   ROTATION[0] = r1[0];
+//   proj.rotate(r1);
+// }
 
-function dragEnded() {
-  wasDragged = true;
-  refresh();
-}
+// function dragEnded() {
+//   wasDragged = true;
+//   refresh();
+// }
 
 /* Slider */
 const sliderWidth = 550;
@@ -268,16 +269,34 @@ svg.select("#pauseButton")
 svg.select("#playButton")
   .on("click", () => {startSpinning();})
   
-svg.select("lButton")
-  .on("click", () => {
+var rotateLeft = () => {
+    var dt = Date.now() - time;
+    proj.rotate([-1*(ROTATION[0] + VELOCITY[0] * dt),0]);
+    refresh();
+  };
+  
+let timerLeft;
+const initSpinLeft = () => {timerLeft = d3.timer(rotateLeft)}
+const stopSpinningLeft = () => {timerLeft.stop()}
+const startSpinningLeft = () => {timerLeft.restart(rotateLeft)}
+
+svg.select("#lButton")
+  .on("mousedown", () => {
+    stopSpinning();
+    initSpinLeft();
     console.log("CLICKED")
-})
+  })
+  .on("mouseup", () => {
+    console.log("Let go")
+    stopSpinningLeft();
+  })
+
 svg.select("#rButton")
-  .on("click", () => {
+  .on("mousedown", () => {
+    stopSpinning();
+    startSpinning();
     console.log("CLICKED")
-})
-// svg.append("Button")
-// .text("wiggle")
-// .on("click", () => {
-//   console.log("CLICKED")
-// });
+  })
+  .on("mouseup", () => {
+    stopSpinning();
+  })
