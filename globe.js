@@ -1,16 +1,16 @@
 const WIDTH = 950;
 const HEIGHT = 700;
-var ROTATION = [40, 0];
-var VELOCITY = [.005, .000];
-var time = Date.now();
-var proj = d3.geoOrthographic().translate([WIDTH / 3, HEIGHT / 2]);
-var path = d3.geoPath().projection(proj);
-var graticule = d3.geoGraticule();
-var wasDragged = false;
-var timer;
-var countryMap = new Map();
-var colors = { clickable: 'green', hover: 'grey', clicked: "red", clickhover: "darkred" };
-
+let ROTATION = [40, 0];
+let VELOCITY = [.005, .000];
+let time = Date.now();
+let proj = d3.geoOrthographic().translate([WIDTH / 3, HEIGHT / 2]);
+let path = d3.geoPath().projection(proj);
+let graticule = d3.geoGraticule();
+let wasDragged = false;
+let timer;
+let countryMap = new Map();
+let colors = { clickable: 'green', hover: 'grey', clicked: "red", clickhover: "darkred" };
+let currentYear = 2000;
 
 var svg = d3.select("#svg1").append("svg")
     .attr("width", WIDTH)
@@ -71,8 +71,10 @@ const ready = async () => {
   console.log(landUseExtent)
 
   /* Country color scale*/
-  let colorScale = d3.scaleSequential(d3.interpolateBlues)
+  let colorScale = d3.scaleSequential(d3.interpolateRdYlGn)
     .domain(landUseExtent)
+
+
 
   countries = topojson.feature(world, world.objects.countries).features;
   names.forEach((d) => {
@@ -102,14 +104,16 @@ const ready = async () => {
       // colorScale[landUse[name]["2000"]]
       svg.insert("path", ".graticule")
         .datum(country)
-        .attr("fill", landUse[name] ?  colorScale(landUse[name]["2000"]): "lightgray")
+        .attr("fill", landUse[name] ?  colorScale(landUse[name][currentYear]): "lightgray")
         .attr("d", path)
         .attr("class", "clickable")
         .attr("country-id", id)
         .on("click", function() {
+            console.log(landUse[name][currentYear])
+            console.log(colorScale(landUse[name][currentYear]))
             d3.selectAll(".clicked")
                 .classed("clicked", false)
-                .attr("fill", colors.clickable)
+                .attr("fill",landUse[name] ?  colorScale(landUse[name][currentYear]): "lightgray")
             d3.select(this)
                 .classed("clicked", true)
                 .attr("fill", colors.clicked)
@@ -132,7 +136,7 @@ const ready = async () => {
               c.attr("fill", colors.clicked);
               selectedCountry = countryMap.get(country.id);
             } else {
-              d3.select(this).attr("fill", landUse[name] ?  colorScale(landUse[name]["2000"]): "white");
+              d3.select(this).attr("fill", landUse[name] ?  colorScale(landUse[name][currentYear]): "lightgray");
             }
         });
   })
@@ -193,13 +197,15 @@ function dragEnded() {
 const sliderWidth = 550;
 var slider = 
     d3.sliderHorizontal()
-    .min(1980)
-    .max(2019)
+    .min(1970)
+    .max(2016)
     .step(1)
     .width(sliderWidth)
     .displayValue(true)
     .on('onchange', val => {
-        console.log("value changed")
+        currentYear = val.toString();
+        // refresh();
+        console.log(currentYear)
 });
 
 var start = WIDTH/3 - sliderWidth/2;
