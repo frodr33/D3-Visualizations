@@ -152,7 +152,7 @@ svg.append("g")
       var c = d3.select(this);
       id = parseInt(country.id);
       var hoveredCountry = countryMap.get(id);
-      document.getElementById("country-name").innerText = hoveredCountry;
+      document.getElementById("country-name").innerText = "Hovered over: "+hoveredCountry;
       if (c.classed("clicked")) {
         c.attr("fill", colors.clickhover);
       } else {
