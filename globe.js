@@ -94,7 +94,7 @@ const ready = async () => {
   countries.forEach((country) => {
     //   console.log(country);
       id = parseInt(country.id);
-
+      name = countryMap.get(id);
       svg.insert("path", ".graticule")
         .datum(country)
         .attr("fill", landUse[name] ?  colorScale(landUse[name][currentYear]): "lightgray")
