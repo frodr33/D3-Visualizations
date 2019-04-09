@@ -27,27 +27,25 @@
 			<h3>&#9312 Select a crop item.</h3>
 			<table class="cropselection">
 					<tr>
-						<td id="wheat">
-								<img class="cropitem" src="icons/wheats.png"/>
+						<td class="cropitem" id="wheat" onclick="selectCropType(this)">
+								<img class="croppic" src="icons/wheats.png"/>
 								<h4>Cereal Crops</h4>
 								<p>Includes wheat, rice, oats, etc.</p>
 						</td>
-						<td id="sugar">
-								<img class="cropitem" src="icons/sugarcane.png"/>
+						<td class="cropitem" id="sugar" onclick="selectCropType(this)">
+								<img class="croppic" src="icons/sugarcane.png"/>
 								<h4>Sugar Crops</h4>
 								<p>Includes sugar beets and canes.</p>
 						</td>
-						<td id="starch">
-								<img class="cropitem" src="icons/potato.png"/>
+						<td class="cropitem" id="starch" onclick="selectCropType(this)">
+								<img class="croppic" src="icons/potato.png"/>
 								<h4>Starchy Roots</h4>
 								<p>Includes potatoes, yams, etc.</p>
 						</td>
 					</tr>
 			</table>
 			<!--Crop Selection script-->
-			<script>
-
-			</script>
+			<script src="cropselect.js"></script>
 			<br />
 			<h3>&#9313 Select a country from the globe.</h3>
 			<h5 id="country-name"> &#0020</h5>

@@ -9,7 +9,7 @@
 	/*Accent Color Schemes*/
 	--cs-url: rgb(211, 170, 69);
 	--cs-select: rgb(87,181,157);
-	--cs-blah: rgb(48,141,150);
+	--cs-title: #1bf3bd;
 }
 
 html{
@@ -27,18 +27,22 @@ h1{
 font-family: 'Nanum Gothic', sans-serif;
 font-size: 40px;
 letter-spacing: 2px;
+color: var(--cs-title);
 }
 
 h3{
 font-family: 'Nanum Gothic', sans-serif;
 font-size: 28px;
 letter-spacing: 2px;
+color: var(--cs-blah);
 }
 
 h5{
 font-family: 'Nanum Gothic', sans-serif;
 font-size: 22px;
 letter-spacing: 2px;
+
+color: var(--cs-blah);
 }
 p {
 font-size: 18px;
@@ -50,7 +54,16 @@ letter-spacing: 1px;
 	width: 100%;
 }
 
-.cropitem{
+.cropitem {
+padding: 1%;
+border: transparent solid 2px;
+}
+
+.cropitem:hover {
+border-bottom: var(--cs-select) solid 2px;
+}
+
+.croppic{
 width: 70px;
 }
 .stroke {
