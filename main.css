@@ -56,12 +56,13 @@ letter-spacing: 1px;
 
 .cropitem {
 padding: 1%;
-border: transparent solid 2px;
+border: transparent solid 5px;
+border-radius: 10px;
 }
 
-.cropitem:hover {
+/* .cropitem:hover {
 border-bottom: var(--cs-select) solid 2px;
-}
+} */
 
 .croppic{
 width: 70px;
