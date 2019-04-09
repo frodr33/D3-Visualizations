@@ -28,8 +28,6 @@ svg.append("path")
 .attr("class", "graticule")
 .attr("d", path);
 
-
-
 const ready = async () => {
   let world = await d3.json("world-110m.v1.json");
   let names = await d3.tsv("world-country-names.tsv")
@@ -74,7 +72,7 @@ const ready = async () => {
 
   /* Country color scale*/
   let colorScale = d3.scaleSequential(d3.interpolateRdYlGn)
-  .domain(landUseExtent)
+    .domain(landUseExtent)
 
   countries = topojson.feature(world, world.objects.countries).features;
   names.forEach((d) => {
@@ -92,8 +90,12 @@ const ready = async () => {
 
 name_array=["China", "India", "Afghanistan", "Canada", "Lebanon"];
 let xscale=d3.scaleLinear()
-.domain([0, 3000])
+.domain([0, 12000])
 .range([600, 1000]);
+
+let barscale=d3.scaleLinear()
+.domain([0, 12000])
+.range([0, 400]); 
 
 let yscale=d3.scaleBand()
 .domain(name_array)
@@ -117,14 +119,15 @@ waste_current=waste.filter(d=> d['Year']==currentYear);
 length=name_array.length;  
 for (x in name_array) {
     waste_of_countries=waste_current.filter(d=> d['Country']==name_array[x]);
-    waste_of_countries=waste_of_countries[0].Value; 
-    svg.append("rectangle") 
-      .attr("width", xscale(waste_of_countries))
-      .attr("height", 100)
-      .attr("x", 1000)
+    waste_of_countries=waste_of_countries[0].Value;
+    waste_of_countries=Number(waste_of_countries);
+    console.log(waste_of_countries) 
+    let rect=svg.append("rect") 
+      .attr("width", barscale(waste_of_countries))
+      .attr("height", 30)
+      .attr("x", 800)
       .attr("y", 600/length)
-      .style("fill", "yellow");
-
+      .style("fill", "orange"); 
 }
 
   // There is an undefined here, must filter stuff first
@@ -141,7 +144,6 @@ for (x in name_array) {
     .attr("country-id", id)
 
     .on("click", function() {
-  
       console.log(landUse[name][currentYear])
       console.log(colorScale(landUse[name][currentYear]))
       d3.selectAll(".clicked")
@@ -152,7 +154,6 @@ for (x in name_array) {
       .attr("fill", colors.clicked);
 			country= countryMap.get(id);
       document.getElementById("country-selected").innerText = "Country Selected: "+ countryMap.get(id);
-
     })
 
     .on("mousemove", function(country) {
@@ -203,6 +204,7 @@ function refresh() {
     }, 3000)
   }
 }
+
 
 var rotate = () => {
   var dt = Date.now() - time;
