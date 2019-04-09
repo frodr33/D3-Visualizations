@@ -32,7 +32,31 @@
 			<div class="col-sm-2"><p id="value-time"></p></div>
 			<div class="col-sm"><div id="slider-time"></div></div>
 			</div> */}} -->
+<script>
+			let xscale=d3.scaleLinear()
+      				.domain([1000, 1500])
+      				.range([600, 1200]);
+   			 let yscale=d3.scaleLinear()
+     			  .domain([0, 1000])
+				  .range([0, 550]);  
 
+			var x_axis = d3.axisBottom()
+				   .scale(xscale)
+				   
+			var y_axis = d3.axisLeft()
+			.scale(yscale);
+				   
+		svg.append("g")
+		.attr("transform","translate("+ 100 +","+ 650+")") 
+	   .call(x_axis);
+
+	   svg.append("g")
+	   .attr("transform","translate("+ 700+","+ 100+")")
+	   .call(y_axis);
+
+
+</script>
+			
 
 </body>
 

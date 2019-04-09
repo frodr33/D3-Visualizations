@@ -74,8 +74,6 @@ const ready = async () => {
   let colorScale = d3.scaleSequential(d3.interpolateRdYlGn)
     .domain(landUseExtent)
 
-
-
   countries = topojson.feature(world, world.objects.countries).features;
   names.forEach((d) => {
       countryMap.set(parseInt(d["id"]), d["name"]);
@@ -122,15 +120,18 @@ const ready = async () => {
               c.attr("fill", colors.hover);
             }
         })
+
         .on("mouseout", function(country) {
             var c = d3.select(this);
             var name = countryMap.get(parseInt(country.id))
             if (c.classed("clicked")) {
               c.attr("fill", colors.clicked);
               selectedCountry = countryMap.get(country.id);
+  
             } else {
               d3.select(this).attr("fill", landUse[name] ?  colorScale(landUse[name][currentYear]): "lightgray");
             }
+            
         });
   })
       
