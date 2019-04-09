@@ -92,16 +92,9 @@ const ready = async () => {
 
   // There is an undefined here, must filter stuff first
   countries.forEach((country) => {
-      let id = parseInt(country.id);
-      let name = countryMap.get(id); // Filter out bad ones...
-      
-      // console.log(name)
+    //   console.log(country);
+      id = parseInt(country.id);
 
-      if (!landUse[name]) {
-        console.log(name)
-      }
-
-      // colorScale[landUse[name]["2000"]]
       svg.insert("path", ".graticule")
         .datum(country)
         .attr("fill", landUse[name] ?  colorScale(landUse[name][currentYear]): "lightgray")
@@ -130,7 +123,6 @@ const ready = async () => {
             }
         })
         .on("mouseout", function(country) {
-            let name = countryMap.get(parseInt(country.id))
             var c = d3.select(this);
             if (c.classed("clicked")) {
               c.attr("fill", colors.clicked);

@@ -1,4 +1,95 @@
+:root {
+	/*Color Scheme*/
+	--cs-white: #fff;
+	--cs-black: #191414;
+	--cs-gray: rgb(86, 84, 86);
+	--cs-record: rgb(64, 63, 64);
+	--cs-axis: rgb(129, 126, 129);
+	--cs-bk:#272527;
 
+
+	/*Accent Color Schemes*/
+
+}
+
+html{
+background-color: var(--cs-bk);
+padding: 5%;
+}
+
+.intro {
+	width: 50%;
+	position: relative; top:0;
+	padding: 20px;
+	display:inline-block;
+}
+
+#bar_component {
+	margin-left: 10%;
+}
+
+.records {
+	width: 40%;
+	float:right;
+	display:inline-block;
+	text-align: center;
+}
+
+.spectrum1{
+	position: relative;
+	margin-bottom: 50px;
+	padding-right: 50px;
+}
+.spectrum2{
+	position: relative;
+	margin-bottom: 50px;
+}
+.spectrum3{
+	position: relative;
+}
+
+body{
+font-family: 'Montserrat', sans-serif;
+/* color: var(--cs-white); */
+}
+p {
+font-family: 'Open Sans', sans-serif;
+font-size: 18px;
+letter-spacing: 1px;
+}
+.recLabelAverage {
+color: var(--cs-white);
+}
+
+.spectrumannotations{
+	font-family: 'Open Sans', sans-serif;
+	font-size: 14px;
+	position: relative;
+	top: -30px;
+	padding-top: 10px;
+	width: 650px;
+	/* padding-left: 20px; */
+}
+
+.smallannotations{
+font-family: 'Open Sans', sans-serif;
+font-size: 14px;
+/* position: relative;
+top: -30px; */
+}
+
+h1 {
+font-size: 50px;
+margin: 0;
+
+}
+
+svg {
+ margin: 20px;
+
+}
+
+/***********************/
 body {
 	background: #fcfcfa;
 }
