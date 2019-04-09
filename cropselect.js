@@ -1,3 +1,5 @@
+//script for selecting crop at step 1.
+
 var cropType= null;
 
 function selectCropType(id) {

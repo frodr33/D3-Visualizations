@@ -58,6 +58,7 @@ letter-spacing: 1px;
 padding: 1%;
 border: transparent solid 5px;
 border-radius: 10px;
+cursor: pointer;
 }
 
 /* .cropitem:hover {

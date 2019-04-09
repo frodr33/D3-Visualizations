@@ -36,10 +36,10 @@ const ready = async () => {
   let waste= await d3.csv("datasets/Loss_cerealcrops.csv")
   let landUse = {};
   let landUseExtent = [100, 0] // min, max
-  
+
   console.log(land);
-  console.log(waste); 
-  
+  console.log(waste);
+
   /* Deserializing csv into landUse object */
   let lastArea = "Afghanistan";
   let landUseInCountry = {}
@@ -57,38 +57,38 @@ const ready = async () => {
       else if (lastArea == "Eswatini") lastArea = "Swaziland"
       else if (lastArea == "Yugoslav SFR") lastArea = "Macedonia, the former Yugoslav Republic of" // There is also a North Macedonia lol
       else if (lastArea == "United Republic of Tanzania") lastArea = "Tanzania, United Republic of"
-      
+
       landUse[lastArea] = landUseInCountry
-      
+
       if (lastArea == "Congo") landUse["Congo, the Democratic Republic of the"] = landUseInCountry // Questionable
       if (lastArea == "Sudan") landUse["South Sudan"] = landUseInCountry // Questionable
-      landUseInCountry = {}  
+      landUseInCountry = {}
     }
     let val = parseFloat(d.Value)
     landUseExtent[0] = val < landUseExtent[0] ? val : landUseExtent[0]
     landUseExtent[1] = val > landUseExtent[1] ? val : landUseExtent[1]
     landUseInCountry[d.Year] = val
-    lastArea = d.Area 
+    lastArea = d.Area
   })
-  landUse[lastArea] = landUseInCountry  
+  landUse[lastArea] = landUseInCountry
   console.log(landUse)
   console.log(landUseExtent)
-  
+
   /* Country color scale*/
   let colorScale = d3.scaleSequential(d3.interpolateRdYlGn)
   .domain(landUseExtent)
-  
+
   waste.forEach((d) => {
-    // (d.Value); 
+    // (d.Value);
   })
 
   name_array=[];
   countries = topojson.feature(world, world.objects.countries).features;
   names.forEach((d) => {
     countryMap.set(parseInt(d["id"]), d["name"]);
-    name_array.push(d.name); 
+    name_array.push(d.name);
   })
-  
+
   svg.insert("path", ".graticule")
   .datum(topojson.feature(world, world.objects.land))
   .attr("class", "land")
@@ -105,7 +105,7 @@ let xscale=d3.scaleLinear()
 console.log(names);
 let yscale=d3.scaleBand()
 .domain(name_array)
-.range([0, 2000]);  
+.range([0, 2000]);
 
 var x_axis = d3.axisBottom()
 .scale(xscale)
@@ -114,19 +114,19 @@ var y_axis = d3.axisLeft()
 .scale(yscale);
 
 svg.append("g")
-.attr("transform","translate("+ 100 +","+ 650+")") 
+.attr("transform","translate("+ 100 +","+ 650+")")
 .call(x_axis);
 
 svg.append("g")
 .attr("transform","translate("+ 700+","+ 0 +")")
 .call(y_axis);
-  
+
   // There is an undefined here, must filter stuff first
   countries.forEach((country) => {
     //   console.log(country);
     id = parseInt(country.id);
     name = countryMap.get(id);
-    name_array.push(name); 
+    name_array.push(name);
     svg.insert("path", ".graticule")
     .datum(country)
     .attr("fill", landUse[name] ?  colorScale(landUse[name][currentYear]): "lightgray")
@@ -156,21 +156,21 @@ svg.append("g")
         c.attr("fill", colors.hover);
       }
     })
-    
+
     .on("mouseout", function(country) {
       var c = d3.select(this);
       var name = countryMap.get(parseInt(country.id))
       if (c.classed("clicked")) {
         c.attr("fill", colors.clicked);
         selectedCountry = countryMap.get(country.id);
-        
+
       } else {
         d3.select(this).attr("fill", landUse[name] ?  colorScale(landUse[name][currentYear]): "lightgray");
       }
-      
+
     });
   })
-  
+
   initSpin();
   refresh();
 };
@@ -180,13 +180,13 @@ function refresh() {
   svg.selectAll(".land").attr("d", path);
   svg.selectAll(".boundary").attr("d", path);
   svg.selectAll(".clickable").attr("d", path);
-  svg.selectAll(".countries path").attr("d", path); 
+  svg.selectAll(".countries path").attr("d", path);
   svg.selectAll(".graticule").attr("d", path);
   if (wasDragged) {
     wasDragged = false;
     setTimeout(() => {
       startSpinning();
-    }, 3000)     
+    }, 3000)
   }
 }
 
@@ -213,7 +213,7 @@ function dragged() {
   var v1 = versor.cartesian(proj.rotate(r0).invert(d3.mouse(this))),
   q1 = versor.multiply(q0, versor.delta(v0, v1)),
   r1 = versor.rotation(q1);
-  
+
   ROTATION[0] = r1[0];
   proj.rotate(r1);
 }
@@ -225,7 +225,7 @@ function dragEnded() {
 
 /* Slider */
 const sliderWidth = 550;
-var slider = 
+var slider =
 d3.sliderHorizontal()
 .min(1970)
 .max(2016)
