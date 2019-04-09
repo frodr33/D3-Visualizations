@@ -124,6 +124,7 @@ const ready = async () => {
         })
         .on("mouseout", function(country) {
             var c = d3.select(this);
+            var name = countryMap.get(parseInt(country.id))
             if (c.classed("clicked")) {
               c.attr("fill", colors.clicked);
               selectedCountry = countryMap.get(country.id);
