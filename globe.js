@@ -12,6 +12,7 @@ let countryMap = new Map();
 let colors = { clickable: 'green', hover: 'grey', clicked: "red", clickhover: "darkred" };
 let currentYear = 2000;
 
+var country= null;
 var svg = d3.select("#svg1").append("svg")
 .attr("width", WIDTH)
 .attr("height", HEIGHT)
@@ -142,7 +143,9 @@ svg.append("g")
       .attr("fill",landUse[name] ?  colorScale(landUse[name][currentYear]): "lightgray")
       d3.select(this)
       .classed("clicked", true)
-      .attr("fill", colors.clicked)
+      .attr("fill", colors.clicked);
+			country= countryMap.get(id);
+			document.getElementById("country-selected").innerText = "Country Selected: "+ countryMap.get(id);
     })
 
     .on("mousemove", function(country) {
