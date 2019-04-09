@@ -5,13 +5,12 @@
 		<meta charset="UTF-8" />
 		<meta http-equiv="x-ua-compatible" content="ie=edge">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
-
 		<title>INFO 3300 P2</title>
 
 <!-- Style -->
 		<link rel="stylesheet" href="main.css">
-		<link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
 		<link href="https://fonts.googleapis.com/css?family=Open+Sans:300" rel="stylesheet">
+		<link href="https://fonts.googleapis.com/css?family=Nanum+Gothic" rel="stylesheet">
 
 <!--External Scripts-->
 		<script src="https://d3js.org/d3.v5.min.js"></script>
@@ -21,7 +20,37 @@
 
 </head>
 <body>
-			<h1 id="country-name"></h1>
+			<h1>Global Crop Production and Wastage</h1>
+			<p>Problems from global hunger to greenhouse gas emissions can be better managed by understanding optimized crop production and wastage given cropland resources.  A country can better utilize its land resources to effectively cultivate efficient masses of crops to limit waste.</p>
+
+			<br />
+			<h3>&#9312 Select a crop item.</h3>
+			<table class="cropselection">
+					<tr>
+						<td id="wheat">
+								<img class="cropitem" src="icons/wheats.png"/>
+								<h4>Cereal Crops</h4>
+								<p>Includes wheat, rice, oats, etc.</p>
+						</td>
+						<td id="sugar">
+								<img class="cropitem" src="icons/sugarcane.png"/>
+								<h4>Sugar Crops</h4>
+								<p>Includes sugar beets and canes.</p>
+						</td>
+						<td id="starch">
+								<img class="cropitem" src="icons/potato.png"/>
+								<h4>Starchy Roots</h4>
+								<p>Includes potatoes, yams, etc.</p>
+						</td>
+					</tr>
+			</table>
+			<!--Crop Selection script-->
+			<script>
+
+			</script>
+			<br />
+			<h3>&#9313 Select a country from the globe.</h3>
+			<h5 id="country-name"> &#0020</h5>
 			<div id="svg1"></div>
 			<div id="slider"></div>
 
@@ -31,8 +60,11 @@
 			<!-- {{/* <div class="row align-items-center">
 			<div class="col-sm-2"><p id="value-time"></p></div>
 			<div class="col-sm"><div id="slider-time"></div></div>
-			</div> */}} -->		
+			</div> */}} -->
 
+<div class="references">
+Data from <a href="http://www.fao.org/home/en" style="color: var(--cs-url);">Food and Agricultura Organization of the United Nations (FAO)</a>.
+<br />Icons made by <a href="https://www.freepik.com/" title="Freepik" style="color: var(--cs-url);">Freepik</a> from <a href="https://www.flaticon.com/" 			    style="color: var(--cs-url);" title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" 			    style="color: var(--cs-url);" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a></div>
 </body>
 
 </html>

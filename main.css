@@ -4,32 +4,55 @@
 	--cs-black: #272527;
 	--cs-gray: rgb(86, 84, 86);
 	--cs-lgray: rgb(129, 126, 129);
+	--cs-bk: rgb(44,49,86);
 
 	/*Accent Color Schemes*/
-
+	--cs-url: rgb(211, 170, 69);
+	--cs-select: rgb(87,181,157);
+	--cs-blah: rgb(48,141,150);
 }
 
 html{
-background-color: var(--cs-bk);
-padding: 5%;
+	background-color: var(--cs-bk);
+	padding: 2%;
 }
 
 body{
-font-family: 'Montserrat', sans-serif;
-/* color: var(--cs-white); */
+	padding: 2%;
+	color: var(--cs-white);
+	font-family: 'Open Sans', sans-serif;
+}
+
+h1{
+font-family: 'Nanum Gothic', sans-serif;
+font-size: 40px;
+letter-spacing: 2px;
+}
+
+h3{
+font-family: 'Nanum Gothic', sans-serif;
+font-size: 28px;
+letter-spacing: 2px;
+}
+
+h5{
+font-family: 'Nanum Gothic', sans-serif;
+font-size: 22px;
+letter-spacing: 2px;
 }
 p {
-font-family: 'Open Sans', sans-serif;
 font-size: 18px;
 letter-spacing: 1px;
 }
 
-
-/***********************/
-body {
-	background: #fcfcfa;
+.cropselection {
+	text-align: center;
+	width: 100%;
 }
 
+.cropitem{
+width: 70px;
+}
 .stroke {
 fill: none;
 stroke: #000;
@@ -51,4 +74,8 @@ stroke-opacity: .5;
 fill: none;
 stroke: #fff;
 stroke-width: 1px;
+}
+
+.references{
+text-align: center;
 }
