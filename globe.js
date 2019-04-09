@@ -10,7 +10,7 @@ let wasDragged = false;
 let timer;
 let countryMap = new Map();
 let colors = { clickable: 'green', hover: 'grey', clicked: "red", clickhover: "darkred" };
-let currentYear = 2000;
+let currentYear = 1970;
 
 var country= null;
 var svg = d3.select("#svg1").append("svg")
@@ -28,14 +28,13 @@ svg.append("path")
 .attr("class", "graticule")
 .attr("d", path);
 
-
-
+let landUse = {};
+let colorScale;
 const ready = async () => {
   let world = await d3.json("world-110m.v1.json");
   let names = await d3.tsv("world-country-names.tsv")
   let land = await d3.csv("landForAgri.csv")
   let waste= await d3.csv("datasets/Loss_cerealcrops.csv")
-  let landUse = {};
   let landUseExtent = [100, 0] // min, max
 
   console.log(land);
@@ -76,8 +75,8 @@ const ready = async () => {
   console.log(landUseExtent)
 
   /* Country color scale*/
-  let colorScale = d3.scaleSequential(d3.interpolateRdYlGn)
-  .domain(landUseExtent)
+  colorScale = d3.scaleSequential(d3.interpolateRdYlGn)
+    .domain(landUseExtent)
 
   waste.forEach((d) => {
     // (d.Value);
@@ -193,6 +192,24 @@ function refresh() {
   }
 }
 
+function redraw() {
+  svg.selectAll(".clickable")
+    .each(function(d, _) {
+      id = parseInt(d3.select(this).attr("country-id"))
+      name = countryMap.get(id)
+      console.log(name)
+      // console.log(d3.select(this).attr("country-id"))
+
+      // console.log(d3.select(this))
+      // console.log(d)
+      // console.log(d3.select(this).country-id)
+      // name = d.country
+      d3.select(this).attr("fill", landUse[name] ?  colorScale(landUse[name][currentYear]): "lightgray")
+    })
+    // .attr("fill", d => landUse[name] ?  colorScale(landUse[name][currentYear]): "lightgray")
+}
+
+
 var rotate = () => {
   var dt = Date.now() - time;
   proj.rotate([ROTATION[0] + VELOCITY[0] * dt,0]);
@@ -228,8 +245,7 @@ function dragEnded() {
 
 /* Slider */
 const sliderWidth = 550;
-var slider =
-d3.sliderHorizontal()
+var slider = d3.sliderHorizontal()
 .min(1970)
 .max(2016)
 .step(1)
@@ -237,7 +253,7 @@ d3.sliderHorizontal()
 .displayValue(true)
 .on('onchange', val => {
   currentYear = val.toString();
-  // refresh();
+  redraw();
   console.log(currentYear)
 });
 
