@@ -1,4 +1,4 @@
-const WIDTH = 950;
+const WIDTH = 1300;
 const HEIGHT = 700;
 let ROTATION = [40, 0];
 let VELOCITY = [.005, .000];
@@ -38,9 +38,6 @@ const ready = async () => {
   let landUse = {};
   let landUseExtent = [100, 0] // min, max
 
-  console.log(land);
-  console.log(waste);
-
   /* Deserializing csv into landUse object */
   let lastArea = "Afghanistan";
   let landUseInCountry = {}
@@ -79,15 +76,9 @@ const ready = async () => {
   let colorScale = d3.scaleSequential(d3.interpolateRdYlGn)
   .domain(landUseExtent)
 
-  waste.forEach((d) => {
-    // (d.Value);
-  })
-
-  name_array=[];
   countries = topojson.feature(world, world.objects.countries).features;
   names.forEach((d) => {
     countryMap.set(parseInt(d["id"]), d["name"]);
-    name_array.push(d.name);
   })
 
   svg.insert("path", ".graticule")
@@ -99,14 +90,14 @@ const ready = async () => {
   .attr("class", "boundary")
   .attr("d", path);
 
+name_array=["China", "India", "Afghanistan", "Canada", "Lebanon"];
 let xscale=d3.scaleLinear()
-.domain([1000, 1500])
-.range([600, 1200]);
+.domain([0, 3000])
+.range([600, 1000]);
 
-console.log(names);
 let yscale=d3.scaleBand()
 .domain(name_array)
-.range([0, 2000]);
+.range([50, 650]);
 
 var x_axis = d3.axisBottom()
 .scale(xscale)
@@ -115,19 +106,33 @@ var y_axis = d3.axisLeft()
 .scale(yscale);
 
 svg.append("g")
-.attr("transform","translate("+ 100 +","+ 650+")")
+.attr("transform","translate("+ 200 +","+ 650+")")
 .call(x_axis);
 
 svg.append("g")
-.attr("transform","translate("+ 700+","+ 0 +")")
+.attr("transform","translate("+ 800+","+ 0 +")")
 .call(y_axis);
+
+waste_current=waste.filter(d=> d['Year']==currentYear); 
+length=name_array.length;  
+for (x in name_array) {
+    waste_of_countries=waste_current.filter(d=> d['Country']==name_array[x]);
+    waste_of_countries=waste_of_countries[0].Value; 
+    svg.append("rectangle") 
+      .attr("width", xscale(waste_of_countries))
+      .attr("height", 100)
+      .attr("x", 1000)
+      .attr("y", 600/length)
+      .style("fill", "yellow");
+
+}
 
   // There is an undefined here, must filter stuff first
   countries.forEach((country) => {
     //   console.log(country);
     id = parseInt(country.id);
     name = countryMap.get(id);
-    name_array.push(name);
+
     svg.insert("path", ".graticule")
     .datum(country)
     .attr("fill", landUse[name] ?  colorScale(landUse[name][currentYear]): "lightgray")
@@ -136,6 +141,7 @@ svg.append("g")
     .attr("country-id", id)
 
     .on("click", function() {
+  
       console.log(landUse[name][currentYear])
       console.log(colorScale(landUse[name][currentYear]))
       d3.selectAll(".clicked")
@@ -145,7 +151,8 @@ svg.append("g")
       .classed("clicked", true)
       .attr("fill", colors.clicked);
 			country= countryMap.get(id);
-			document.getElementById("country-selected").innerText = "Country Selected: "+ countryMap.get(id);
+      document.getElementById("country-selected").innerText = "Country Selected: "+ countryMap.get(id);
+
     })
 
     .on("mousemove", function(country) {
@@ -166,10 +173,14 @@ svg.append("g")
       if (c.classed("clicked")) {
         c.attr("fill", colors.clicked);
         selectedCountry = countryMap.get(country.id);
+        
+        
 
       } else {
         d3.select(this).attr("fill", landUse[name] ?  colorScale(landUse[name][currentYear]): "lightgray");
       }
+
+     
 
     });
   })
@@ -237,8 +248,6 @@ d3.sliderHorizontal()
 .displayValue(true)
 .on('onchange', val => {
   currentYear = val.toString();
-  // refresh();
-  console.log(currentYear)
 });
 
 var start = WIDTH/3 - sliderWidth/2;
