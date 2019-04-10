@@ -23,6 +23,9 @@ svg.append("path")
 .attr("class", "graticule")
 .attr("d", path);
 
+let landUse = {}
+let colorScale;
+
 const ready = async () => {
   let world = await d3.json("world-110m.v1.json");
   let names = await d3.tsv("world-country-names.tsv")
@@ -34,7 +37,7 @@ const ready = async () => {
   let sugar_production= await d3.csv("datasets/Production_sugarcrops.csv")
   let starch_production= await d3.csv("datasets/Production_starchcrops.csv")
 
-  let landUse = {};
+
  
 
   let landUseExtent = [100, 0] // min, max
@@ -74,7 +77,7 @@ const ready = async () => {
   console.log(landUseExtent)
 
   /* Country color scale*/
-  let colorScale = d3.scaleSequential(d3.interpolateRdYlGn)
+  colorScale = d3.scaleSequential(d3.interpolateRdYlGn)
     .domain(landUseExtent)
 
   countries = topojson.feature(world, world.objects.countries).features;
@@ -284,12 +287,17 @@ function refresh() {
     }, 3000)
   }
 }
+
+function redraw() {
+  svg.selectAll(".clickable")
+    .each(function(d, _) {
+      id = parseInt(d3.select(this).attr("country-id"))
+      name = countryMap.get(id)
+      d3.select(this).attr("fill", landUse[name] ?  colorScale(landUse[name][currentYear]): "lightgray")
+    })
+}
+
 var currentGlobalTime;
-// var myTimer = (elapsed) => {
-//   currentGlobalTime = elapsed;
-// }
-
-
 var totalElapsedTime = 0;
 var startTime = d3.now() - totalElapsedTime;
 
@@ -312,16 +320,16 @@ var rotate = () => {
   theta = ROTATION[0] + VELOCITY[0] * dt
 
   if (direction < 0) {
-    console.log("here")
+    // console.log("here")
     theta = (direction * theta) + (2 * lastTheta);
   } else {
     theta = theta - 2 * (lastlastTheta - lastTheta);
     // theta1 = lastTheta + (theta - lastTheta);
   }
-  console.log("debug")
-  console.log(lastlastTheta)
-  console.log(lastTheta)
-  console.log(theta)
+  // console.log("debug")
+  // console.log(lastlastTheta)
+  // console.log(lastTheta)
+  // console.log(theta)
 
   proj.rotate([theta,0]);
   refresh();
@@ -342,28 +350,6 @@ const startSpinning = () => {
   time = currentGlobalTime;
   timer.restart(rotate);
 }
-// function dragstarted() {
-//   wasDragged = false;
-//   timer.stop();
-//   v0 = versor.cartesian(proj.invert(d3.mouse(this)));
-//   r0 = proj.rotate();
-//   q0 = versor(r0);
-//   stopSpinning();
-// }
-
-// function dragged() {
-//   var v1 = versor.cartesian(proj.rotate(r0).invert(d3.mouse(this))),
-//   q1 = versor.multiply(q0, versor.delta(v0, v1)),
-//   r1 = versor.rotation(q1);
-
-//   ROTATION[0] = r1[0];
-//   proj.rotate(r1);
-// }
-
-// function dragEnded() {
-//   wasDragged = true;
-//   refresh();
-// }
 
 /* Slider */
 const sliderWidth = 550;
@@ -376,6 +362,8 @@ d3.sliderHorizontal()
 .displayValue(true)
 .on('onchange', val => {
   currentYear = val.toString();
+  redraw();
+
 });
 
 var start = WIDTH/3 - sliderWidth/2;
