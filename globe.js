@@ -1,7 +1,6 @@
 const WIDTH = 1300;
 const HEIGHT = 700;
-let ROTATION = [40, 0];
-let VELOCITY = [.005, .000];
+const VELOCITY = .25;
 let time = Date.now();
 let proj = d3.geoOrthographic().translate([WIDTH / 3, HEIGHT / 2]);
 let path = d3.geoPath().projection(proj);
@@ -27,9 +26,9 @@ let landUse = {}
 let colorScale;
 
 const ready = async () => {
-  let world = await d3.json("world-110m.v1.json");
-  let names = await d3.tsv("world-country-names.tsv")
-  let land = await d3.csv("landForAgri.csv")
+  let world = await d3.json("datasets/world-110m.v1.json");
+  let names = await d3.tsv("datasets/world-country-names.tsv")
+  let land = await d3.csv("datasets/landForAgri.csv")
   let sugar_waste= await d3.csv("datasets/Loss_sugarcrops.csv")
   let cereal_waste= await d3.csv("datasets/Loss_cerealcrops.csv")
   let starch_waste= await d3.csv("datasets/Loss_starchcrops.csv")
@@ -209,22 +208,17 @@ document.getElementById('wheat').onclick = function() {
     }
     }
 
-  // There is an undefined here, must filter stuff first
-  countries.forEach((country) => {
-    //   console.log(country);
-    id = parseInt(country.id);
-    name = countryMap.get(id);
 
+  countries.forEach((country) => {
+    let id = parseInt(country.id);
+    let name = countryMap.get(id);
     svg.insert("path", ".graticule")
     .datum(country)
     .attr("fill", landUse[name] ?  colorScale(landUse[name][currentYear]): "lightgray")
     .attr("d", path)
     .attr("class", "clickable")
     .attr("country-id", id)
-
     .on("click", function() {
-      console.log(landUse[name][currentYear])
-      console.log(colorScale(landUse[name][currentYear]))
       d3.selectAll(".clicked")
       .classed("clicked", false)
       .attr("fill",landUse[name] ?  colorScale(landUse[name][currentYear]): "lightgray")
@@ -234,7 +228,6 @@ document.getElementById('wheat').onclick = function() {
 			country= countryMap.get(id);
       document.getElementById("country-selected").innerText = "Country Selected: "+ countryMap.get(id);
     })
-
     .on("mousemove", function(country) {
       var c = d3.select(this);
       id = parseInt(country.id);
@@ -246,25 +239,17 @@ document.getElementById('wheat').onclick = function() {
         c.attr("fill", colors.hover);
       }
     })
-
     .on("mouseout", function(country) {
       var c = d3.select(this);
       var name = countryMap.get(parseInt(country.id))
       if (c.classed("clicked")) {
         c.attr("fill", colors.clicked);
         selectedCountry = countryMap.get(country.id);
-        
-        
-
       } else {
         d3.select(this).attr("fill", landUse[name] ?  colorScale(landUse[name][currentYear]): "lightgray");
       }
-
-     
-
     });
   })
-
   initSpin();
   refresh();
 };
@@ -293,42 +278,18 @@ function redraw() {
     })
 }
 
-var currentGlobalTime;
-var totalElapsedTime = 0;
-var startTime = d3.now() - totalElapsedTime;
-
-var dt;
 var direction = 1;
-var theta = 0;
-var lastTheta = 0;
-var lastlastTheta = 0;
-
-var totalElapsedTheta = 0;
-var startTheta = 0;
-
-
+let theta = 0;
 var rotate = () => {
-  if (direction < 0) theta = theta - .25;
-  else theta = theta + .25;
+  if (direction < 0) theta = theta - VELOCITY;
+  else theta = theta + VELOCITY;
   proj.rotate([theta,0]);
   refresh();
 };
 
-const initSpin = () => {
-  timer = d3.timer(rotate)
-}
-const stopSpinning = () => {
-  totalElapsedTime = d3.now() - startTime; 
-
-  lastlastTheta = lastTheta;
-  lastTheta = theta;
-  timer.stop();
-}
-const startSpinning = () => {
-  startTime = d3.now() - totalElapsedTime;
-  time = currentGlobalTime;
-  timer.restart(rotate);
-}
+const initSpin = () => {timer = d3.timer(rotate);}
+const stopSpinning = () => {timer.stop();}
+const startSpinning = () => {timer.restart(rotate);}
 
 /* Slider */
 const sliderWidth = 550;
