@@ -209,18 +209,64 @@ function redraw() {
     })
     // .attr("fill", d => landUse[name] ?  colorScale(landUse[name][currentYear]): "lightgray")
 }
+var currentGlobalTime;
+// var myTimer = (elapsed) => {
+//   currentGlobalTime = elapsed;
+// }
+
+
+var totalElapsedTime = 0;
+var startTime = d3.now() - totalElapsedTime;
+
+var dt;
+var direction = 1;
+var theta;
+var lastTheta = 0;
+var lastlastTheta = 0;
+
+var totalElapsedTheta = 0;
+var startTheta = 0;
 
 
 var rotate = () => {
-  var dt = Date.now() - time;
-  proj.rotate([ROTATION[0] + VELOCITY[0] * dt,0]);
+  dt = d3.now() - startTime;
+  // t = Date.now()
+  // dt = t - time;
+  // currentGlobalTime = t;
+
+  theta = ROTATION[0] + VELOCITY[0] * dt
+
+  if (direction < 0) {
+    console.log("here")
+    theta = (direction * theta) + (2 * lastTheta);
+  } else {
+    theta = theta - 2 * (lastlastTheta - lastTheta);
+    // theta1 = lastTheta + (theta - lastTheta);
+  }
+  console.log("debug")
+  console.log(lastlastTheta)
+  console.log(lastTheta)
+  console.log(theta)
+
+  proj.rotate([theta,0]);
   refresh();
 };
 
-const initSpin = () => {timer = d3.timer(rotate)}
-const stopSpinning = () => {timer.stop()}
-const startSpinning = () => {timer.restart(rotate)}
+const initSpin = () => {
+  timer = d3.timer(rotate)
+}
+const stopSpinning = () => {
+  totalElapsedTime = d3.now() - startTime; 
 
+  lastlastTheta = lastTheta;
+  lastTheta = theta;
+  timer.stop();
+}
+const startSpinning = () => {
+  startTime = d3.now() - totalElapsedTime;
+  time = currentGlobalTime;
+  timer.restart(rotate);
+}
 // function dragstarted() {
 //   wasDragged = false;
 //   timer.stop();
@@ -270,8 +316,9 @@ svg.select("#playButton")
   .on("click", () => {startSpinning();})
   
 var rotateLeft = () => {
-    var dt = Date.now() - time;
-    proj.rotate([-1*(ROTATION[0] + VELOCITY[0] * dt),0]);
+    dtp = Date.now() - dt;
+    console.log(dt);
+    proj.rotate([-1*(ROTATION[0] + VELOCITY[0] * dtp),0]);
     refresh();
   };
   
@@ -283,18 +330,23 @@ const startSpinningLeft = () => {timerLeft.restart(rotateLeft)}
 svg.select("#lButton")
   .on("mousedown", () => {
     stopSpinning();
-    initSpinLeft();
+    // totalElapsedTime = d3.now() - startTime; 
+    direction = -1;
+    startSpinning();
+    // initSpinLeft();
     console.log("CLICKED")
   })
   .on("mouseup", () => {
     console.log("Let go")
-    stopSpinningLeft();
+    stopSpinning();
+    direction = 1;
+    // startTime = d3.now() - totalElapsedTime;
   })
 
 svg.select("#rButton")
   .on("mousedown", () => {
     stopSpinning();
-    startSpinning();
+    // startSpinning();
     console.log("CLICKED")
   })
   .on("mouseup", () => {
