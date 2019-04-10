@@ -1,3 +1,5 @@
+
+
 const WIDTH = 1300;
 const HEIGHT = 700;
 const VELOCITY = .25;
@@ -12,6 +14,7 @@ let colors = { clickable: 'green', hover: 'grey', clicked: "blue", clickhover: "
 let currentYear = 1970;
 let landUse = {}
 let colorScale;
+var cropType=null;
 var country= null;
 let direction = 1;
 let theta = 0;
@@ -25,6 +28,34 @@ svg.append("path")
 .attr("class", "graticule")
 .attr("d", path);
 
+
+//country word bank
+name_array=["India", "China", "Afghanistan", "Canada", "Lebanon"];
+
+function addToCountryBank(country) {
+	let bank= document.getElementById('bank');
+	let slot= document.createElement("div");
+	slot.className= "countryslot";
+	slot.id= country;
+
+	let countrybutton= document.createElement("div");
+	countrybutton.className= "country";
+	countrybutton.onclick= function() {removeFromCountryBank(country);};
+	let countrybuttonlabel= document.createElement("p");
+	countrybuttonlabel.innerHTML= country;
+
+	countrybutton.append(countrybuttonlabel);
+	slot.append(countrybutton);
+	bank.append(slot);
+};
+
+function removeFromCountryBank(country) {
+	name_array.splice(name_array.indexOf(country), 1);
+	(document.getElementById(country)).remove();
+	// console.log(name_array);
+}
+
+
 const ready = async () => {
   let world = await d3.json("datasets/world-110m.v1.json");
   let names = await d3.tsv("datasets/world-country-names.tsv")
@@ -34,9 +65,10 @@ const ready = async () => {
   let starch_waste= await d3.csv("datasets/Loss_starchcrops.csv")
   let cereal_production= await d3.csv("datasets/Production_cerealcrops.csv")
   let sugar_production= await d3.csv("datasets/Production_sugarcrops.csv")
-  let starch_production= await d3.csv("datasets/Production_starchcrops.csv")
-  let landUseExtent = [100, 0] 
-
+  let starch_production= await d3.csv("datasets/Production_starchcrops.csv");
+  let landUseExtent = [100, 0];
+  name_array=["India", "China", "Afghanistan", "Canada", "Lebanon"];
+	name_array.forEach(function(country) {addToCountryBank(country);});
   /* Deserializing csv into landUse object */
   let lastArea = "Afghanistan";
   let landUseInCountry = {}
@@ -67,7 +99,6 @@ const ready = async () => {
   })
   landUse[lastArea] = landUseInCountry
 
-
   /* Country color scale*/
   colorScale = d3.scaleSequential(d3.interpolateRdYlGn)
     .domain(landUseExtent)
@@ -88,14 +119,14 @@ const ready = async () => {
   .attr("d", path);
 
   /* Bar graph Visualization */
-  name_array=["India", "China", "Afghanistan", "Canada", "Lebanon"];
+
   let xscale=d3.scaleLinear()
   .domain([0, 200000])
   .range([600, 1000]);
 
   let barscale=d3.scaleLinear()
   .domain([0, 200000])
-  .range([0, 400]); 
+  .range([0, 400]);
 
   let yscale=d3.scaleBand()
   .domain(name_array)
@@ -115,131 +146,138 @@ const ready = async () => {
   .attr("transform","translate("+ 800+","+ 0 +")")
   .call(y_axis);
 
-  const cropFunction = (waste, production) => {
+  const cropFunction = (waste, production, cropid) => {
     return () => {
-      waste_current=waste.filter(d=> d['Year']==currentYear); 
-      console.log(currentYear); 
-      production_current=production.filter(d=> d['Year']==currentYear); 
-      length=name_array.length;  
-      console.log(waste_current); 
+			if (cropType !== null) {
+				document.getElementById(cropType).style.border= "solid transparent 5px";
+			}
+			cropType=cropid;
+			console.log("item: "+cropType);
+			document.getElementById(cropType).style.border= "solid var(--cs-url) 5px";
+
+      waste_current=waste.filter(d=> d['Year']==currentYear);
+      console.log(currentYear);
+      production_current=production.filter(d=> d['Year']==currentYear);
+      length=name_array.length;
+      console.log(waste_current);
       console.log(production_current)
       for (x in name_array) {
           waste_of_countries=waste_current.filter(d=> d['Country']==name_array[x]);
           prod_of_countries=production_current.filter(d=> d['Country']==name_array[x]);
           waste_of_countries=waste_of_countries[0].Value;
           prod_of_countries=prod_of_countries[0].Value;
-          waste_of_countries=Number(waste_of_countries); 
+          waste_of_countries=Number(waste_of_countries);
           prod_of_countries=Number(prod_of_countries);
-          console.log(waste_of_countries) 
+          console.log(waste_of_countries)
           console.log(prod_of_countries)
-          let rect1=svg.append("rect") 
+          let rect1=svg.append("rect")
             .attr("width", barscale(prod_of_countries))
             .attr("height", 30)
             .attr("x", 800)
             .attr("y", 100+x*(600/length))
-            .style("fill", "white"); 
-          let rect2=svg.append("rect") 
+            .style("fill", "white");
+          let rect2=svg.append("rect")
             .attr("width", barscale(waste_of_countries))
             .attr("height", 30)
             .attr("x", 800)
             .attr("y", 100+x*(600/length))
-            .style("fill", "red"); 
+            .style("fill", "red");
       }
     }
   }
 
-  document.getElementById('wheat').onclick = cropFunction(cereal_waste, cereal_production)
-  document.getElementById('sugar').onclick = cropFunction(sugar_waste, sugar_production)
-  document.getElementById('starch').onclick = cropFunction(starch_waste, starch_production)
+  document.getElementById('wheat').onclick = cropFunction(cereal_waste, cereal_production,'wheat')
+  document.getElementById('sugar').onclick = cropFunction(sugar_waste, sugar_production,'sugar')
+  document.getElementById('starch').onclick = cropFunction(starch_waste, starch_production,'starch')
 
   // document.getElementById('wheat').onclick = function() {
-  //   waste_current=cereal_waste.filter(d=> d['Year']==currentYear); 
-  //   console.log(currentYear); 
-  //   production_current=cereal_production.filter(d=> d['Year']==currentYear); 
-  //   length=name_array.length;  
-  //   console.log(waste_current); 
+  //   waste_current=cereal_waste.filter(d=> d['Year']==currentYear);
+  //   console.log(currentYear);
+  //   production_current=cereal_production.filter(d=> d['Year']==currentYear);
+  //   length=name_array.length;
+  //   console.log(waste_current);
   //   console.log(production_current)
   //   for (x in name_array) {
   //       waste_of_countries=waste_current.filter(d=> d['Country']==name_array[x]);
   //       prod_of_countries=production_current.filter(d=> d['Country']==name_array[x]);
   //       waste_of_countries=waste_of_countries[0].Value;
   //       prod_of_countries=prod_of_countries[0].Value;
-  //       waste_of_countries=Number(waste_of_countries); 
+  //       waste_of_countries=Number(waste_of_countries);
   //       prod_of_countries=Number(prod_of_countries);
-  //       console.log(waste_of_countries) 
+  //       console.log(waste_of_countries)
   //       console.log(prod_of_countries)
-  //       let rect1=svg.append("rect") 
+  //       let rect1=svg.append("rect")
   //         .attr("width", barscale(prod_of_countries))
   //         .attr("height", 30)
   //         .attr("x", 800)
   //         .attr("y", 100+x*(600/length))
-  //         .style("fill", "white"); 
-  //       let rect2=svg.append("rect") 
+  //         .style("fill", "white");
+  //       let rect2=svg.append("rect")
   //         .attr("width", barscale(waste_of_countries))
   //         .attr("height", 30)
   //         .attr("x", 800)
   //         .attr("y", 100+x*(600/length))
-  //         .style("fill", "red"); 
+  //         .style("fill", "red");
   //   }
   //   }
 
   //   document.getElementById('sugar').onclick = function() {
-  //     waste_current=sugar_waste.filter(d=> d['Year']==currentYear); 
-  //     production_current=sugar_production.filter(d=> d['Year']==currentYear); 
-  //     length=name_array.length;  
-  //     console.log(waste_current); 
+  //     waste_current=sugar_waste.filter(d=> d['Year']==currentYear);
+  //     production_current=sugar_production.filter(d=> d['Year']==currentYear);
+  //     length=name_array.length;
+  //     console.log(waste_current);
   //     for (x in name_array) {
   //       console.log(name_array[x])
   //       console.log(waste_current['Country'])
   //         waste_of_countries=waste_current.filter(d=> d['Country']==name_array[x]);
   //         prod_of_countries=production_current.filter(d=> d['Country']==name_array[x]);
-  //         console.log(waste_of_countries); 
+  //         console.log(waste_of_countries);
   //         waste_of_countries=waste_of_countries[0].Value;
   //         prod_of_countries=prod_of_countries[0].Value;
-  //         waste_of_countries=Number(waste_of_countries); 
+  //         waste_of_countries=Number(waste_of_countries);
   //         prod_of_countries=Number(prod_of_countries);
-  //         let rect1=svg.append("rect") 
+  //         let rect1=svg.append("rect")
   //           .attr("width", barscale(prod_of_countries))
   //           .attr("height", 30)
   //           .attr("x", 800)
   //           .attr("y", 100+x*(600/length))
-  //           .style("fill", "white"); 
-  //         let rect2=svg.append("rect") 
+  //           .style("fill", "white");
+  //         let rect2=svg.append("rect")
   //           .attr("width", barscale(waste_of_countries))
   //           .attr("height", 30)
   //           .attr("x", 800)
   //           .attr("y", 100+x*(600/length))
-  //           .style("fill", "red"); 
+  //           .style("fill", "red");
   //     }
   //     }
   //   document.getElementById('starch').onclick = function() {
-  //     starch_current=starch_waste.filter(d=> d['Year']==currentYear); 
-  //     console.log(currentYear); 
-  //     production_current=starch_production.filter(d=> d['Year']==currentYear); 
-  //     length=name_array.length;  
-  //     console.log(starch_current); 
+  //     starch_current=starch_waste.filter(d=> d['Year']==currentYear);
+  //     console.log(currentYear);
+  //     production_current=starch_production.filter(d=> d['Year']==currentYear);
+  //     length=name_array.length;
+  //     console.log(starch_current);
   //     console.log(production_current)
   //     for (x in name_array) {
   //         waste_of_countries=starch_current.filter(d=> d['Country']==name_array[x]);
   //         prod_of_countries=production_current.filter(d=> d['Country']==name_array[x]);
   //         waste_of_countries=waste_of_countries[0].Value;
   //         prod_of_countries=prod_of_countries[0].Value;
-  //         waste_of_countries=Number(waste_of_countries); 
+  //         waste_of_countries=Number(waste_of_countries);
   //         prod_of_countries=Number(prod_of_countries);
-  //         console.log(waste_of_countries) 
+  //         console.log(waste_of_countries)
   //         console.log(prod_of_countries)
-  //         let rect1=svg.append("rect") 
+  //         let rect1=svg.append("rect")
   //           .attr("width", barscale(prod_of_countries))
   //           .attr("height", 30)
   //           .attr("x", 800)
   //           .attr("y", 100+x*(600/length))
-  //           .style("fill", "white"); 
-  //         let rect2=svg.append("rect") 
+  //           .style("fill", "white");
+  //         let rect2=svg.append("rect")
   //           .attr("width", barscale(waste_of_countries))
   //           .attr("height", 30)
   //           .attr("x", 800)
   //           .attr("y", 100+x*(600/length))
-  //           .style("fill", "red"); 
+  //           .style("fill", "red");
   //     }
   //     }
 
@@ -261,7 +299,12 @@ const ready = async () => {
       .classed("clicked", true)
       .attr("fill", colors.clicked);
 			country= countryMap.get(id);
-      document.getElementById("country-selected").innerText = "Country Selected: "+ countryMap.get(id);
+			if (!name_array.includes(countryMap.get(id))) {
+					name_array.push(countryMap.get(id));
+					addToCountryBank(countryMap.get(id));
+			}
+
+
     })
     .on("mousemove", function(country) {
       var c = d3.select(this);
@@ -350,7 +393,7 @@ svg.select("#pauseButton")
 
 svg.select("#playButton")
   .on("click", () => {startSpinning();})
-  
+
 svg.select("#lButton")
   .on("mousedown", () => {
     stopSpinning();

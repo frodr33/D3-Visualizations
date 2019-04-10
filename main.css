@@ -61,10 +61,35 @@ border-radius: 10px;
 cursor: pointer;
 }
 
-/* .cropitem:hover {
-border-bottom: var(--cs-select) solid 2px;
-} */
+.countryselection {
+	text-align: center;
+	width: 100%;
+	min-height: 170px;
+	border: dashed var(--cs-white) 2px;
+}
 
+.country{
+	width: 100%;
+	height: auto;
+	border-radius: 10px;
+	border: solid var(--cs-white) 2px;
+	text-align: center;
+	background-color: var(--cs-url);
+	color: black;
+	font-weight: bold;
+	cursor: pointer;
+}
+
+.country:hover {
+	background-color: var(--cs-gray);
+	color: var(--cs-white);
+}
+
+.countryslot {
+padding: 10px;
+width: 19%;
+display:inline-block
+}
 .croppic{
 width: 70px;
 }
