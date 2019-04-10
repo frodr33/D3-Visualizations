@@ -83,6 +83,7 @@ cursor: pointer;
 .country:hover {
 	background-color: var(--cs-gray);
 	color: var(--cs-white);
+	text-decoration: line-through;
 }
 
 .countryslot {
