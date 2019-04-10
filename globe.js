@@ -36,10 +36,6 @@ const ready = async () => {
   let cereal_production= await d3.csv("datasets/Production_cerealcrops.csv")
   let sugar_production= await d3.csv("datasets/Production_sugarcrops.csv")
   let starch_production= await d3.csv("datasets/Production_starchcrops.csv")
-
-
- 
-
   let landUseExtent = [100, 0] // min, max
 
   /* Deserializing csv into landUse object */
@@ -326,10 +322,10 @@ var rotate = () => {
     theta = theta - 2 * (lastlastTheta - lastTheta);
     // theta1 = lastTheta + (theta - lastTheta);
   }
-  // console.log("debug")
-  // console.log(lastlastTheta)
-  // console.log(lastTheta)
-  // console.log(theta)
+  console.log("debug")
+  console.log(lastlastTheta)
+  console.log(lastTheta)
+  console.log(theta)
 
   proj.rotate([theta,0]);
   refresh();
@@ -409,7 +405,7 @@ svg.select("#lButton")
 svg.select("#rButton")
   .on("mousedown", () => {
     stopSpinning();
-    // startSpinning();
+    startSpinning();
     console.log("CLICKED")
   })
   .on("mouseup", () => {
