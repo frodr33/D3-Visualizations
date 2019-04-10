@@ -13,15 +13,10 @@ let colors = { clickable: 'green', hover: 'grey', clicked: "red", clickhover: "d
 let currentYear = 1970;
 
 var country= null;
-var svg = d3.select("#svg1").append("svg")
+var svg = d3.select("#svg1")
 .attr("width", WIDTH)
 .attr("height", HEIGHT)
 .attr("class", "svg");
-
-svg.call(d3.drag()
-.on("start", dragstarted)
-.on("drag", dragged)
-.on("end", dragEnded));
 
 svg.append("path")
 .datum(graticule)
