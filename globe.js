@@ -42,7 +42,6 @@ const ready = async () => {
   let landUseInCountry = {}
   land.forEach((d, _) => {
     if (lastArea !== d.Area) {
-      // Hard coding differences in
       if (lastArea == "United States of America") lastArea = "United States"
       else if (lastArea == "Venezuela (Bolivarian Republic of)") lastArea = "Venezuela, Bolivarian Republic of"
       else if (lastArea == "Czechia") lastArea = "Czech Republic"
@@ -56,9 +55,8 @@ const ready = async () => {
       else if (lastArea == "United Republic of Tanzania") lastArea = "Tanzania, United Republic of"
 
       landUse[lastArea] = landUseInCountry
-
-      if (lastArea == "Congo") landUse["Congo, the Democratic Republic of the"] = landUseInCountry // Questionable
-      if (lastArea == "Sudan") landUse["South Sudan"] = landUseInCountry // Questionable
+      if (lastArea == "Congo") landUse["Congo, the Democratic Republic of the"] = landUseInCountry
+      if (lastArea == "Sudan") landUse["South Sudan"] = landUseInCountry
       landUseInCountry = {}
     }
     let val = parseFloat(d.Value)
@@ -291,20 +289,27 @@ const initSpin = () => {timer = d3.timer(rotate);}
 const stopSpinning = () => {timer.stop();}
 const startSpinning = () => {timer.restart(rotate);}
 
+var dataTime = []
+for (var i = 1972; i <= 2016; i+=4) {
+  dataTime.push(i);
+}
+
 /* Slider */
 const sliderWidth = 550;
-var slider =
-d3.sliderHorizontal()
-.min(1970)
-.max(2016)
+var slider = d3.sliderHorizontal()
+.min(d3.min(dataTime))
+.max(d3.max(dataTime))
 .step(1)
+.tickFormat(d3.format("d"))
+.tickValues(dataTime)
 .width(sliderWidth)
 .displayValue(true)
 .on('onchange', val => {
   currentYear = val.toString();
   redraw();
-
 });
+
+d3.select('slider').text(d3.timeFormat('%Y')(slider.value()));
 
 var start = WIDTH/3 - sliderWidth/2;
 svg.append("g")
