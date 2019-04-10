@@ -53,10 +53,10 @@
 			<div>
 				<svg id="svg1">
 					<defs>
-						<pattern id="pause"  x="695" y="50" patternUnits="userSpaceOnUse"  height="20" width="20">
+						<pattern id="pause"  x="695" y="80" patternUnits="userSpaceOnUse"  height="20" width="20">
 						<image x="0" y="0" xlink:href="icons/pause.png"></image>
 						</pattern>
-						<pattern id="play" x="695" y="75" patternUnits="userSpaceOnUse" height="20" width="20">
+						<pattern id="play" x="695" y="105" patternUnits="userSpaceOnUse" height="20" width="20">
 						<image x="0" y="0" xlink:href="icons/play.png"></image>
 						</pattern>
 						<pattern id="rarrow" x="695" y="340" patternUnits="userSpaceOnUse" height="20" width="20">
@@ -65,11 +65,17 @@
 						<pattern id="larrow" x="155" y="340" patternUnits="userSpaceOnUse" height="20" width="20">
 						<image x="0" y="0" xlink:href="icons/leftArrow.png"></image>
 						</pattern>
+						<pattern id="colorBar" x="155" y="80" patternUnits="userSpaceOnUse" height="120" width="20">
+						<image x="0" y="0" xlink:href="icons/colorBar.png"></image>
+						</pattern>
 					</defs>
-					<rect id="pauseButton" x="695" y="50" width="20" height="20" fill="url(#pause)" />
-					<rect id="playButton" x="695" y="75" width="20" height="20" fill="url(#play)" />
+					<rect id="pauseButton" x="695" y="80" width="20" height="20" fill="url(#pause)" />
+					<rect id="playButton" x="695" y="105" width="20" height="20" fill="url(#play)" />
 					<rect id="rButton" x="695" y="340" width="20" height="20" fill="url(#rarrow)" />
 					<rect id="lButton" x="155" y="340" width="20" height="20" fill="url(#larrow)" />
+					<rect id="colorBarRect" x="155" y="80" width="20" height="120" fill="url(#colorBar)" />
+					<text x="180" y="95" style="fill:white; font: italic 13px sans-serif">70%</text>
+					<text x="180" y="195" style="fill:white; font: italic 13px sans-serif">0%</text>
 				</svg>
 			</div>
 			<div id="slider"></div>

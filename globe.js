@@ -249,7 +249,7 @@ const ready = async () => {
     let name = countryMap.get(id);
     svg.insert("path", ".graticule")
     .datum(country)
-    .attr("fill", landUse[name] ?  colorScale(landUse[name][currentYear]): "lightgray")
+    .attr("fill", landUse[name] && landUse[name][currentYear] ?  colorScale(landUse[name][currentYear]): "lightgray")
     .attr("d", path)
     .attr("class", "clickable")
     .attr("country-id", id)
@@ -281,7 +281,7 @@ const ready = async () => {
         c.attr("fill", colors.clicked);
         selectedCountry = countryMap.get(country.id);
       } else {
-        d3.select(this).attr("fill", landUse[name] ?  colorScale(landUse[name][currentYear]): "lightgray");
+        d3.select(this).attr("fill", landUse[name] && landUse[name][currentYear] ?  colorScale(landUse[name][currentYear]): "lightgray");
       }
     });
   })
@@ -305,7 +305,7 @@ function redraw() {
     .each(function(d, _) {
       id = parseInt(d3.select(this).attr("country-id"))
       name = countryMap.get(id)
-      d3.select(this).attr("fill", landUse[name] ?  colorScale(landUse[name][currentYear]): "lightgray")
+      d3.select(this).attr("fill", landUse[name] && landUse[name][currentYear] ?  colorScale(landUse[name][currentYear]): "lightgray")
     })
 }
 
