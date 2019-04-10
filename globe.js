@@ -8,7 +8,7 @@ let graticule = d3.geoGraticule();
 let wasDragged = false;
 let timer;
 let countryMap = new Map();
-let colors = { clickable: 'green', hover: 'grey', clicked: "red", clickhover: "darkred" };
+let colors = { clickable: 'green', hover: 'grey', clicked: "blue", clickhover: "darkblue" };
 let currentYear = 1970;
 
 var country= null;
@@ -218,8 +218,8 @@ document.getElementById('wheat').onclick = function() {
     .attr("country-id", id)
     .on("click", function() {
       d3.selectAll(".clicked")
-      .classed("clicked", false)
-      .attr("fill",landUse[name] ?  colorScale(landUse[name][currentYear]): "lightgray")
+      .classed("clicked", false);
+      redraw();
       d3.select(this)
       .classed("clicked", true)
       .attr("fill", colors.clicked);
@@ -309,8 +309,6 @@ var slider = d3.sliderHorizontal()
   redraw();
 });
 
-d3.select('slider').text(d3.timeFormat('%Y')(slider.value()));
-
 var start = WIDTH/3 - sliderWidth/2;
 svg.append("g")
 .attr('transform', 'translate('+ start +',650)')
@@ -328,10 +326,8 @@ svg.select("#lButton")
     stopSpinning();
     direction = -1;
     startSpinning();
-    console.log("CLICKED")
   })
   .on("mouseup", () => {
-    console.log("Let go")
     stopSpinning();
     direction = 1;
   })
@@ -340,7 +336,6 @@ svg.select("#rButton")
   .on("mousedown", () => {
     stopSpinning();
     startSpinning();
-    console.log("CLICKED")
   })
   .on("mouseup", () => {
     stopSpinning();
