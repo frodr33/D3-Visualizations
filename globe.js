@@ -34,7 +34,11 @@ const ready = async () => {
   let land = await d3.csv("landForAgri.csv")
   let sugar_waste= await d3.csv("datasets/Loss_sugarcrops.csv")
   let cereal_waste= await d3.csv("datasets/Loss_cerealcrops.csv")
+  let starch_waste= await d3.csv("datasets/Loss_starchcrops.csv")
   let cereal_production= await d3.csv("datasets/Production_cerealcrops.csv")
+  let sugar_production= await d3.csv("datasets/Production_sugarcrops.csv")
+  let starch_production= await d3.csv("datasets/Production_starchcrops.csv")
+
   let landUse = {};
  
 
@@ -92,7 +96,7 @@ const ready = async () => {
   .attr("class", "boundary")
   .attr("d", path);
 
-name_array=["China", "India", "Afghanistan", "Canada", "Lebanon"];
+name_array=["India", "China", "Afghanistan", "Canada", "Lebanon"];
 let xscale=d3.scaleLinear()
 .domain([0, 200000])
 .range([600, 1000]);
@@ -119,27 +123,10 @@ svg.append("g")
 .attr("transform","translate("+ 800+","+ 0 +")")
 .call(y_axis);
 
-document.getElementById('sugar').onclick = function() {
-waste_current=sugar_waste.filter(d=> d['Year']==currentYear); 
-length=name_array.length;  
-console.log(waste_current); 
-for (x in name_array) {
-    waste_of_countries=waste_current.filter(d=> d['Country']==name_array[x]);
-    console.log(waste_of_countries); 
-    waste_of_countries=waste_of_countries[0].Value;
-    waste_of_countries=Number(waste_of_countries);
-    console.log(waste_of_countries) 
-    let rect=svg.append("rect") 
-      .attr("width", barscale(waste_of_countries))
-      .attr("height", 30)
-      .attr("x", 800)
-      .attr("y", 600*x/length)
-      .style("fill", "orange"); 
-}
-}
 
 document.getElementById('wheat').onclick = function() {
   waste_current=cereal_waste.filter(d=> d['Year']==currentYear); 
+  console.log(currentYear); 
   production_current=cereal_production.filter(d=> d['Year']==currentYear); 
   length=name_array.length;  
   console.log(waste_current); 
@@ -167,6 +154,66 @@ document.getElementById('wheat').onclick = function() {
         .style("fill", "red"); 
   }
   }
+
+  document.getElementById('sugar').onclick = function() {
+    waste_current=sugar_waste.filter(d=> d['Year']==currentYear); 
+    production_current=sugar_production.filter(d=> d['Year']==currentYear); 
+    length=name_array.length;  
+    console.log(waste_current); 
+    for (x in name_array) {
+      console.log(name_array[x])
+      console.log(waste_current['Country'])
+        waste_of_countries=waste_current.filter(d=> d['Country']==name_array[x]);
+        prod_of_countries=production_current.filter(d=> d['Country']==name_array[x]);
+        console.log(waste_of_countries); 
+        waste_of_countries=waste_of_countries[0].Value;
+        prod_of_countries=prod_of_countries[0].Value;
+        waste_of_countries=Number(waste_of_countries); 
+        prod_of_countries=Number(prod_of_countries);
+        let rect1=svg.append("rect") 
+          .attr("width", barscale(prod_of_countries))
+          .attr("height", 30)
+          .attr("x", 800)
+          .attr("y", 100+x*(600/length))
+          .style("fill", "white"); 
+        let rect2=svg.append("rect") 
+          .attr("width", barscale(waste_of_countries))
+          .attr("height", 30)
+          .attr("x", 800)
+          .attr("y", 100+x*(600/length))
+          .style("fill", "red"); 
+    }
+    }
+  document.getElementById('starch').onclick = function() {
+    starch_current=starch_waste.filter(d=> d['Year']==currentYear); 
+    console.log(currentYear); 
+    production_current=starch_production.filter(d=> d['Year']==currentYear); 
+    length=name_array.length;  
+    console.log(starch_current); 
+    console.log(production_current)
+    for (x in name_array) {
+        waste_of_countries=starch_current.filter(d=> d['Country']==name_array[x]);
+        prod_of_countries=production_current.filter(d=> d['Country']==name_array[x]);
+        waste_of_countries=waste_of_countries[0].Value;
+        prod_of_countries=prod_of_countries[0].Value;
+        waste_of_countries=Number(waste_of_countries); 
+        prod_of_countries=Number(prod_of_countries);
+        console.log(waste_of_countries) 
+        console.log(prod_of_countries)
+        let rect1=svg.append("rect") 
+          .attr("width", barscale(prod_of_countries))
+          .attr("height", 30)
+          .attr("x", 800)
+          .attr("y", 100+x*(600/length))
+          .style("fill", "white"); 
+        let rect2=svg.append("rect") 
+          .attr("width", barscale(waste_of_countries))
+          .attr("height", 30)
+          .attr("x", 800)
+          .attr("y", 100+x*(600/length))
+          .style("fill", "red"); 
+    }
+    }
 
   // There is an undefined here, must filter stuff first
   countries.forEach((country) => {
