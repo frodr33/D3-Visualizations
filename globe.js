@@ -114,76 +114,16 @@ svg.append("g")
 .attr("transform","translate("+ 800+","+ 0 +")")
 .call(y_axis);
 
-
-document.getElementById('wheat').onclick = function() {
-  waste_current=cereal_waste.filter(d=> d['Year']==currentYear); 
-  console.log(currentYear); 
-  production_current=cereal_production.filter(d=> d['Year']==currentYear); 
-  length=name_array.length;  
-  console.log(waste_current); 
-  console.log(production_current)
-  for (x in name_array) {
-      waste_of_countries=waste_current.filter(d=> d['Country']==name_array[x]);
-      prod_of_countries=production_current.filter(d=> d['Country']==name_array[x]);
-      waste_of_countries=waste_of_countries[0].Value;
-      prod_of_countries=prod_of_countries[0].Value;
-      waste_of_countries=Number(waste_of_countries); 
-      prod_of_countries=Number(prod_of_countries);
-      console.log(waste_of_countries) 
-      console.log(prod_of_countries)
-      let rect1=svg.append("rect") 
-        .attr("width", barscale(prod_of_countries))
-        .attr("height", 30)
-        .attr("x", 800)
-        .attr("y", 100+x*(600/length))
-        .style("fill", "white"); 
-      let rect2=svg.append("rect") 
-        .attr("width", barscale(waste_of_countries))
-        .attr("height", 30)
-        .attr("x", 800)
-        .attr("y", 100+x*(600/length))
-        .style("fill", "red"); 
-  }
-  }
-
-  document.getElementById('sugar').onclick = function() {
-    waste_current=sugar_waste.filter(d=> d['Year']==currentYear); 
-    production_current=sugar_production.filter(d=> d['Year']==currentYear); 
+const onClickFunc = (waste, production) => {
+  return () => {
+    waste_current=waste.filter(d=> d['Year']==currentYear); 
+    console.log(currentYear); 
+    production_current=production.filter(d=> d['Year']==currentYear); 
     length=name_array.length;  
     console.log(waste_current); 
-    for (x in name_array) {
-      console.log(name_array[x])
-      console.log(waste_current['Country'])
-        waste_of_countries=waste_current.filter(d=> d['Country']==name_array[x]);
-        prod_of_countries=production_current.filter(d=> d['Country']==name_array[x]);
-        console.log(waste_of_countries); 
-        waste_of_countries=waste_of_countries[0].Value;
-        prod_of_countries=prod_of_countries[0].Value;
-        waste_of_countries=Number(waste_of_countries); 
-        prod_of_countries=Number(prod_of_countries);
-        let rect1=svg.append("rect") 
-          .attr("width", barscale(prod_of_countries))
-          .attr("height", 30)
-          .attr("x", 800)
-          .attr("y", 100+x*(600/length))
-          .style("fill", "white"); 
-        let rect2=svg.append("rect") 
-          .attr("width", barscale(waste_of_countries))
-          .attr("height", 30)
-          .attr("x", 800)
-          .attr("y", 100+x*(600/length))
-          .style("fill", "red"); 
-    }
-    }
-  document.getElementById('starch').onclick = function() {
-    starch_current=starch_waste.filter(d=> d['Year']==currentYear); 
-    console.log(currentYear); 
-    production_current=starch_production.filter(d=> d['Year']==currentYear); 
-    length=name_array.length;  
-    console.log(starch_current); 
     console.log(production_current)
     for (x in name_array) {
-        waste_of_countries=starch_current.filter(d=> d['Country']==name_array[x]);
+        waste_of_countries=waste_current.filter(d=> d['Country']==name_array[x]);
         prod_of_countries=production_current.filter(d=> d['Country']==name_array[x]);
         waste_of_countries=waste_of_countries[0].Value;
         prod_of_countries=prod_of_countries[0].Value;
@@ -204,7 +144,104 @@ document.getElementById('wheat').onclick = function() {
           .attr("y", 100+x*(600/length))
           .style("fill", "red"); 
     }
-    }
+  }
+}
+
+document.getElementById('wheat').onclick = onClickFunc(cereal_waste, cereal_production)
+document.getElementById('sugar').onclick = onClickFunc(sugar_waste, sugar_production)
+document.getElementById('starch').onclick = onClickFunc(starch_waste, starch_production)
+
+
+// document.getElementById('wheat').onclick = function() {
+//   waste_current=cereal_waste.filter(d=> d['Year']==currentYear); 
+//   console.log(currentYear); 
+//   production_current=cereal_production.filter(d=> d['Year']==currentYear); 
+//   length=name_array.length;  
+//   console.log(waste_current); 
+//   console.log(production_current)
+//   for (x in name_array) {
+//       waste_of_countries=waste_current.filter(d=> d['Country']==name_array[x]);
+//       prod_of_countries=production_current.filter(d=> d['Country']==name_array[x]);
+//       waste_of_countries=waste_of_countries[0].Value;
+//       prod_of_countries=prod_of_countries[0].Value;
+//       waste_of_countries=Number(waste_of_countries); 
+//       prod_of_countries=Number(prod_of_countries);
+//       console.log(waste_of_countries) 
+//       console.log(prod_of_countries)
+//       let rect1=svg.append("rect") 
+//         .attr("width", barscale(prod_of_countries))
+//         .attr("height", 30)
+//         .attr("x", 800)
+//         .attr("y", 100+x*(600/length))
+//         .style("fill", "white"); 
+//       let rect2=svg.append("rect") 
+//         .attr("width", barscale(waste_of_countries))
+//         .attr("height", 30)
+//         .attr("x", 800)
+//         .attr("y", 100+x*(600/length))
+//         .style("fill", "red"); 
+//   }
+//   }
+
+//   document.getElementById('sugar').onclick = function() {
+//     waste_current=sugar_waste.filter(d=> d['Year']==currentYear); 
+//     production_current=sugar_production.filter(d=> d['Year']==currentYear); 
+//     length=name_array.length;  
+//     console.log(waste_current); 
+//     for (x in name_array) {
+//       console.log(name_array[x])
+//       console.log(waste_current['Country'])
+//         waste_of_countries=waste_current.filter(d=> d['Country']==name_array[x]);
+//         prod_of_countries=production_current.filter(d=> d['Country']==name_array[x]);
+//         console.log(waste_of_countries); 
+//         waste_of_countries=waste_of_countries[0].Value;
+//         prod_of_countries=prod_of_countries[0].Value;
+//         waste_of_countries=Number(waste_of_countries); 
+//         prod_of_countries=Number(prod_of_countries);
+//         let rect1=svg.append("rect") 
+//           .attr("width", barscale(prod_of_countries))
+//           .attr("height", 30)
+//           .attr("x", 800)
+//           .attr("y", 100+x*(600/length))
+//           .style("fill", "white"); 
+//         let rect2=svg.append("rect") 
+//           .attr("width", barscale(waste_of_countries))
+//           .attr("height", 30)
+//           .attr("x", 800)
+//           .attr("y", 100+x*(600/length))
+//           .style("fill", "red"); 
+//     }
+//     }
+//   document.getElementById('starch').onclick = function() {
+//     starch_current=starch_waste.filter(d=> d['Year']==currentYear); 
+//     console.log(currentYear); 
+//     production_current=starch_production.filter(d=> d['Year']==currentYear); 
+//     length=name_array.length;  
+//     console.log(starch_current); 
+//     console.log(production_current)
+//     for (x in name_array) {
+//         waste_of_countries=starch_current.filter(d=> d['Country']==name_array[x]);
+//         prod_of_countries=production_current.filter(d=> d['Country']==name_array[x]);
+//         waste_of_countries=waste_of_countries[0].Value;
+//         prod_of_countries=prod_of_countries[0].Value;
+//         waste_of_countries=Number(waste_of_countries); 
+//         prod_of_countries=Number(prod_of_countries);
+//         console.log(waste_of_countries) 
+//         console.log(prod_of_countries)
+//         let rect1=svg.append("rect") 
+//           .attr("width", barscale(prod_of_countries))
+//           .attr("height", 30)
+//           .attr("x", 800)
+//           .attr("y", 100+x*(600/length))
+//           .style("fill", "white"); 
+//         let rect2=svg.append("rect") 
+//           .attr("width", barscale(waste_of_countries))
+//           .attr("height", 30)
+//           .attr("x", 800)
+//           .attr("y", 100+x*(600/length))
+//           .style("fill", "red"); 
+//     }
+//     }
 
 
   countries.forEach((country) => {
