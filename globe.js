@@ -10,19 +10,18 @@ let wasDragged = false;
 let timer;
 let countryMap = new Map();
 let colors = { clickable: 'green', hover: 'grey', clicked: "red", clickhover: "darkred" };
-let currentYear = 2000;
+let currentYear = 1970;
 
 var country= null;
-var svg = d3.select("#svg1")
+var svg = d3.select("#svg1").append("svg")
 .attr("width", WIDTH)
 .attr("height", HEIGHT)
 .attr("class", "svg");
 
-// Dragging
-// svg.call(d3.drag()
-// .on("start", dragstarted)
-// .on("drag", dragged)
-// .on("end", dragEnded));
+svg.call(d3.drag()
+.on("start", dragstarted)
+.on("drag", dragged)
+.on("end", dragEnded));
 
 svg.append("path")
 .datum(graticule)
@@ -33,8 +32,12 @@ const ready = async () => {
   let world = await d3.json("world-110m.v1.json");
   let names = await d3.tsv("world-country-names.tsv")
   let land = await d3.csv("landForAgri.csv")
-  let waste= await d3.csv("datasets/Loss_cerealcrops.csv")
+  let sugar_waste= await d3.csv("datasets/Loss_sugarcrops.csv")
+  let cereal_waste= await d3.csv("datasets/Loss_cerealcrops.csv")
+  let cereal_production= await d3.csv("datasets/Production_cerealcrops.csv")
   let landUse = {};
+ 
+
   let landUseExtent = [100, 0] // min, max
 
   /* Deserializing csv into landUse object */
@@ -91,11 +94,11 @@ const ready = async () => {
 
 name_array=["China", "India", "Afghanistan", "Canada", "Lebanon"];
 let xscale=d3.scaleLinear()
-.domain([0, 12000])
+.domain([0, 200000])
 .range([600, 1000]);
 
 let barscale=d3.scaleLinear()
-.domain([0, 12000])
+.domain([0, 200000])
 .range([0, 400]); 
 
 let yscale=d3.scaleBand()
@@ -116,10 +119,13 @@ svg.append("g")
 .attr("transform","translate("+ 800+","+ 0 +")")
 .call(y_axis);
 
-waste_current=waste.filter(d=> d['Year']==currentYear); 
+document.getElementById('sugar').onclick = function() {
+waste_current=sugar_waste.filter(d=> d['Year']==currentYear); 
 length=name_array.length;  
+console.log(waste_current); 
 for (x in name_array) {
     waste_of_countries=waste_current.filter(d=> d['Country']==name_array[x]);
+    console.log(waste_of_countries); 
     waste_of_countries=waste_of_countries[0].Value;
     waste_of_countries=Number(waste_of_countries);
     console.log(waste_of_countries) 
@@ -127,9 +133,40 @@ for (x in name_array) {
       .attr("width", barscale(waste_of_countries))
       .attr("height", 30)
       .attr("x", 800)
-      .attr("y", 600/length)
+      .attr("y", 600*x/length)
       .style("fill", "orange"); 
 }
+}
+
+document.getElementById('wheat').onclick = function() {
+  waste_current=cereal_waste.filter(d=> d['Year']==currentYear); 
+  production_current=cereal_production.filter(d=> d['Year']==currentYear); 
+  length=name_array.length;  
+  console.log(waste_current); 
+  console.log(production_current)
+  for (x in name_array) {
+      waste_of_countries=waste_current.filter(d=> d['Country']==name_array[x]);
+      prod_of_countries=production_current.filter(d=> d['Country']==name_array[x]);
+      waste_of_countries=waste_of_countries[0].Value;
+      prod_of_countries=prod_of_countries[0].Value;
+      waste_of_countries=Number(waste_of_countries); 
+      prod_of_countries=Number(prod_of_countries);
+      console.log(waste_of_countries) 
+      console.log(prod_of_countries)
+      let rect1=svg.append("rect") 
+        .attr("width", barscale(prod_of_countries))
+        .attr("height", 30)
+        .attr("x", 800)
+        .attr("y", 100+x*(600/length))
+        .style("fill", "white"); 
+      let rect2=svg.append("rect") 
+        .attr("width", barscale(waste_of_countries))
+        .attr("height", 30)
+        .attr("x", 800)
+        .attr("y", 100+x*(600/length))
+        .style("fill", "red"); 
+  }
+  }
 
   // There is an undefined here, must filter stuff first
   countries.forEach((country) => {
@@ -198,12 +235,12 @@ function refresh() {
   svg.selectAll(".clickable").attr("d", path);
   svg.selectAll(".countries path").attr("d", path);
   svg.selectAll(".graticule").attr("d", path);
-  // if (wasDragged) {
-  //   wasDragged = false;
-  //   setTimeout(() => {
-  //     startSpinning();
-  //   }, 3000)
-  // }
+  if (wasDragged) {
+    wasDragged = false;
+    setTimeout(() => {
+      startSpinning();
+    }, 3000)
+  }
 }
 
 
@@ -217,28 +254,28 @@ const initSpin = () => {timer = d3.timer(rotate)}
 const stopSpinning = () => {timer.stop()}
 const startSpinning = () => {timer.restart(rotate)}
 
-// function dragstarted() {
-//   wasDragged = false;
-//   timer.stop();
-//   v0 = versor.cartesian(proj.invert(d3.mouse(this)));
-//   r0 = proj.rotate();
-//   q0 = versor(r0);
-//   stopSpinning();
-// }
+function dragstarted() {
+  wasDragged = false;
+  timer.stop();
+  v0 = versor.cartesian(proj.invert(d3.mouse(this)));
+  r0 = proj.rotate();
+  q0 = versor(r0);
+  stopSpinning();
+}
 
-// function dragged() {
-//   var v1 = versor.cartesian(proj.rotate(r0).invert(d3.mouse(this))),
-//   q1 = versor.multiply(q0, versor.delta(v0, v1)),
-//   r1 = versor.rotation(q1);
+function dragged() {
+  var v1 = versor.cartesian(proj.rotate(r0).invert(d3.mouse(this))),
+  q1 = versor.multiply(q0, versor.delta(v0, v1)),
+  r1 = versor.rotation(q1);
 
-//   ROTATION[0] = r1[0];
-//   proj.rotate(r1);
-// }
+  ROTATION[0] = r1[0];
+  proj.rotate(r1);
+}
 
-// function dragEnded() {
-//   wasDragged = true;
-//   refresh();
-// }
+function dragEnded() {
+  wasDragged = true;
+  refresh();
+}
 
 /* Slider */
 const sliderWidth = 550;
@@ -257,42 +294,3 @@ var start = WIDTH/3 - sliderWidth/2;
 svg.append("g")
 .attr('transform', 'translate('+ start +',650)')
 .call(slider);
-
-/* Buttons */
-svg.select("#pauseButton")
-  .on("click", () => {stopSpinning();})
-
-svg.select("#playButton")
-  .on("click", () => {startSpinning();})
-  
-var rotateLeft = () => {
-    var dt = Date.now() - time;
-    proj.rotate([-1*(ROTATION[0] + VELOCITY[0] * dt),0]);
-    refresh();
-  };
-  
-let timerLeft;
-const initSpinLeft = () => {timerLeft = d3.timer(rotateLeft)}
-const stopSpinningLeft = () => {timerLeft.stop()}
-const startSpinningLeft = () => {timerLeft.restart(rotateLeft)}
-
-svg.select("#lButton")
-  .on("mousedown", () => {
-    stopSpinning();
-    initSpinLeft();
-    console.log("CLICKED")
-  })
-  .on("mouseup", () => {
-    console.log("Let go")
-    stopSpinningLeft();
-  })
-
-svg.select("#rButton")
-  .on("mousedown", () => {
-    stopSpinning();
-    startSpinning();
-    console.log("CLICKED")
-  })
-  .on("mouseup", () => {
-    stopSpinning();
-  })

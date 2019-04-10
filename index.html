@@ -50,31 +50,16 @@
 			<h3>&#9313 Select a country from the globe.</h3>
 			<h5 id="country-selected" style="color: var(--cs-url);">Country Selected: </h5>
 			<h4 id="country-name">Hover over a Country!</h4>
-			<div>
-				<svg id="svg1">
-					<defs>
-						<pattern id="pause"  x="550" y="50" patternUnits="userSpaceOnUse"  height="20" width="20">
-						<image x="0" y="0" xlink:href="icons/pause.png"></image>
-						</pattern>
-						<pattern id="play" x="550" y="75" patternUnits="userSpaceOnUse" height="20" width="20">
-						<image x="0" y="0" xlink:href="icons/play.png"></image>
-						</pattern>
-						<pattern id="rarrow" x="560" y="340" patternUnits="userSpaceOnUse" height="20" width="20">
-						<image x="0" y="0" xlink:href="icons/rightArrow.png"></image>
-						</pattern>
-						<pattern id="larrow" x="30" y="340" patternUnits="userSpaceOnUse" height="20" width="20">
-						<image x="0" y="0" xlink:href="icons/leftArrow.png"></image>
-						</pattern>
-					</defs>
-					<rect id="pauseButton" x="550" y="50" width="20" height="20" fill="url(#pause)" />
-					<rect id="playButton" x="550" y="75" width="20" height="20" fill="url(#play)" />
-					<rect id="rButton" x="580" y="340" width="20" height="20" fill="url(#rarrow)" />
-					<rect id="lButton" x="30" y="340" width="20" height="20" fill="url(#larrow)" />
-				</svg>
-			</div>
+			<div id="svg1"></div>
 			<div id="slider"></div>
+
 			<script src="globe.js"></script>
 			<script src="countryData.js"></script>
+			<!-- {{/* <div class="row align-items-center">
+			<div class="col-sm-2"><p id="value-time"></p></div>
+			<div class="col-sm"><div id="slider-time"></div></div>
+			</div> */}} -->
+
 <div class="references">
 Data from <a href="http://www.fao.org/home/en" style="color: var(--cs-url);">Food and Agricultura Organization of the United Nations (FAO)</a>.
 <br />Icons made by <a href="https://www.freepik.com/" title="Freepik" style="color: var(--cs-url);">Freepik</a> from <a href="https://www.flaticon.com/" 			    style="color: var(--cs-url);" title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" 			    style="color: var(--cs-url);" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a></div>
