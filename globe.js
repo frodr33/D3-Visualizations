@@ -3,6 +3,8 @@
 const WIDTH = 1300;
 const HEIGHT = 700;
 const VELOCITY = .25;
+const MANUAL_VELOCITY = .65;
+let rotating = true;
 let time = Date.now();
 let proj = d3.geoOrthographic().translate([WIDTH / 3, HEIGHT / 2]);
 let path = d3.geoPath().projection(proj);
@@ -273,9 +275,11 @@ function redraw() {
 const initSpin = () => {timer = d3.timer(rotate);}
 const stopSpinning = () => {timer.stop();}
 const startSpinning = () => {timer.restart(rotate);}
+
 var rotate = () => {
-  if (direction < 0) theta = theta - VELOCITY;
-  else theta = theta + VELOCITY;
+  var vel = rotating ? VELOCITY : MANUAL_VELOCITY;
+  if (direction < 0) theta = theta - vel;
+  else theta = theta + vel;
   proj.rotate([theta,0]);
   refresh();
 };
@@ -310,11 +314,15 @@ svg.select("#pauseButton")
   .on("click", () => {stopSpinning();})
 
 svg.select("#playButton")
-  .on("click", () => {startSpinning();})
+  .on("click", () => {
+    rotating = true;
+    startSpinning();
+  })
 
 svg.select("#lButton")
   .on("mousedown", () => {
     stopSpinning();
+    rotating = false;
     direction = -1;
     startSpinning();
   })
@@ -326,6 +334,7 @@ svg.select("#lButton")
 svg.select("#rButton")
   .on("mousedown", () => {
     stopSpinning();
+    rotating = false;
     startSpinning();
   })
   .on("mouseup", () => {
