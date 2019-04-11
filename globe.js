@@ -42,7 +42,7 @@ const ready = async () => {
   let starch_production= await d3.csv("datasets/Production_starchcrops.csv");
   let landUseExtent = [100, 0];
 
-  name_array=["India", "China"]
+  name_array=["United States", "Nigeria", "Paraguay", "United Kingdom", "India"]
 function addToCountryBank(country) {
 			let bank= document.getElementById('bank');
 			let slot= document.createElement("div");
