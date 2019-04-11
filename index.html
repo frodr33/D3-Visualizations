@@ -50,9 +50,9 @@
 			<p>The area of land coutnries dedicate for crop production can vary based on natural resources and economic/political circumstances at specific time periods.  The amount of cropland resources a country has directly determines its crop production levels and how much in loss it can still take.  Countries with fewer cropland resources may struggle from high crop loss given their resource constraint.</p>
 			<h5 style="text-align:center;" id="country-selected" style="color: var(--cs-url);">Countries Selected </h5>
 			<div id="bank" class="countryselection"></div>
-			<h4 id="country-percent">Hover over a Country!</h4>
+			<h4 id="country-percent">&nbsp;</h4>
 			<div>
-				<svg id="svg1">
+				<svg id="svg1" >
 					<defs>
 						<pattern id="pause"  x="695" y="80" patternUnits="userSpaceOnUse"  height="20" width="20">
 						<image x="0" y="0" xlink:href="icons/pause.png"></image>
@@ -75,6 +75,8 @@
 					<rect id="rButton" x="695" y="340" width="20" height="20" fill="url(#rarrow)" />
 					<rect id="lButton" x="155" y="340" width="20" height="20" fill="url(#larrow)" />
 					<rect id="colorBarRect" x="155" y="80" width="20" height="120" fill="url(#colorBar)" />
+					<text x="-200" transform="rotate(-90)" y="150" style=" fill:white; font: italic 15px sans-serif">% of land for crops</text>
+					<text x="110" y="15" style="fill:white; font: italic 13px sans-serif">Year: </text>
 					<text x="180" y="95" style="fill:white; font: italic 13px sans-serif">70%</text>
 					<text x="180" y="195" style="fill:white; font: italic 13px sans-serif">0%</text>
 				</svg>
