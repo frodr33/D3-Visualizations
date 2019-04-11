@@ -134,10 +134,12 @@ const ready = async () => {
 
   svg.append("g")
   .attr("transform","translate("+ 200 +","+ 650+")")
+  .attr("class", 'xaxis')
   .call(x_axis);
 
   svg.append("g")
   .attr("transform","translate("+ 800+","+ 0 +")")
+  .attr("class", 'yaxis')
   .call(y_axis);
 
   const cropFunction = (waste, production, cropid) => {
@@ -167,11 +169,10 @@ const ready = async () => {
           svg.append("rect")
             .attr("id", "bar")
             .attr("width", barscale(prod_of_countries))
-            .attr("height", 30)
+            .attr("height", 20)
             .attr("x", 800)
-            .attr("y", 100+x*(600/length))
-            .style("fill", "white");
-          
+            .attr("y", 100+50*x)
+            .style("fill", "white"); 
       }
     }
   }
@@ -194,7 +195,10 @@ const ready = async () => {
       .classed("clicked", false);
       redraw();
       d3.selectAll('#bar')
-        
+        // #reset visualization 
+      d3.selectAll('g.yaxis')
+          .update()
+           
       d3.select(this)
       .classed("clicked", true)
       .attr("fill", colors.clicked);
