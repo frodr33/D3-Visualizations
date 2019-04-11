@@ -115,16 +115,16 @@ const ready = async () => {
 
   /* Bar graph Visualization */
   let xscale=d3.scaleLinear()
-  .domain([0, 200000])
-  .range([600, 1000]);
+  .domain([0, 100])
+  .range([600, 900]);
 
   let barscale=d3.scaleLinear()
-  .domain([0, 200000])
-  .range([0, 400]);
+  .domain([0, 100])
+  .range([0, 300]);
 
   let yscale=d3.scaleBand()
-  .domain(name_array)
-  .range([50, 650]);
+  .domain([])
+  .range([50, 580]);
 
   var x_axis = d3.axisBottom()
   .scale(xscale)
@@ -133,12 +133,12 @@ const ready = async () => {
   .scale(yscale);
 
   svg.append("g")
-  .attr("transform","translate("+ 200 +","+ 650+")")
+  .attr("transform","translate("+ 250 +","+ 580+")")
   .attr("class", 'xaxis')
   .call(x_axis);
 
   svg.append("g")
-  .attr("transform","translate("+ 800+","+ 0 +")")
+  .attr("transform","translate("+ 850+","+ 0 +")")
   .attr("class", 'yaxis')
   .call(y_axis);
 
@@ -150,7 +150,6 @@ const ready = async () => {
 			cropType=cropid;
 			console.log("item: "+cropType);
 			document.getElementById(cropType).style.border= "solid var(--cs-url) 5px";
-
       waste_current=waste.filter(d=> d['Year']==currentYear);
       console.log(currentYear);
       production_current=production.filter(d=> d['Year']==currentYear);
@@ -168,11 +167,19 @@ const ready = async () => {
           console.log(prod_of_countries)
           svg.append("rect")
             .attr("id", "bar")
-            .attr("width", barscale(prod_of_countries))
+            .attr("width", barscale(100*waste_of_countries/prod_of_countries))
             .attr("height", 20)
-            .attr("x", 800)
-            .attr("y", 100+50*x)
+            .attr("x", 850)
+            .attr("y", 50+((x+1)*8))
             .style("fill", "white"); 
+          svg.append("text")
+            .attr("x", 790)
+            .attr("y", 62+((x+1)*8))
+            .attr("text-anchor", "middle")
+            .attr("dominant-baseline", "middle")
+            .style("fill", "white")
+            .style("font-size", "12px")
+            .text(name_array[x])
       }
     }
   }
@@ -194,11 +201,6 @@ const ready = async () => {
       d3.selectAll(".clicked")
       .classed("clicked", false);
       redraw();
-      d3.selectAll('#bar')
-        // #reset visualization 
-      d3.selectAll('g.yaxis')
-          .update()
-           
       d3.select(this)
       .classed("clicked", true)
       .attr("fill", colors.clicked);
@@ -207,7 +209,10 @@ const ready = async () => {
 					name_array.push(countryMap.get(id));
 					addToCountryBank(countryMap.get(id));
 			}
-
+      if (document.getElementById('wheat').clicked) {
+        console.log('hi'); 
+       cropFunction(cereal_waste, cereal_production,'wheat'); 
+      }
 
     })
     .on("mousemove", function(country) {
@@ -237,6 +242,8 @@ const ready = async () => {
       } else {
         d3.select(this).attr("fill", landUse[name] && landUse[name][currentYear] ?  colorScale(landUse[name][currentYear]): "lightgray");
       }
+      
+      
     });
   })
   initSpin();
