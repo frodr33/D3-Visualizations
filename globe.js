@@ -29,9 +29,7 @@ svg.append("path")
 .attr("d", path);
 
 
-//country word bank
-name_array=["", "China", "Afghanistan", "Canada", "Lebanon"];
-
+name_array=["India", "China"]
 function addToCountryBank(country) {
 			let bank= document.getElementById('bank');
 			let slot= document.createElement("div");
@@ -54,7 +52,6 @@ function removeFromCountryBank(country) {
 	(document.getElementById(country)).remove();
 }
 
-
 const ready = async () => {
   let world = await d3.json("datasets/world-110m.v1.json");
   let names = await d3.tsv("datasets/world-country-names.tsv")
@@ -66,7 +63,6 @@ const ready = async () => {
   let sugar_production= await d3.csv("datasets/Production_sugarcrops.csv")
   let starch_production= await d3.csv("datasets/Production_starchcrops.csv");
   let landUseExtent = [100, 0];
-  name_array=["India", "China", "Afghanistan", "Canada", "Lebanon"];
 	name_array.forEach(function(country) {addToCountryBank(country);});
   /* Deserializing csv into landUse object */
   let lastArea = "Afghanistan";
@@ -118,7 +114,6 @@ const ready = async () => {
   .attr("d", path);
 
   /* Bar graph Visualization */
-
   let xscale=d3.scaleLinear()
   .domain([0, 200000])
   .range([600, 1000]);
@@ -169,18 +164,14 @@ const ready = async () => {
           prod_of_countries=Number(prod_of_countries);
           console.log(waste_of_countries)
           console.log(prod_of_countries)
-          let rect1=svg.append("rect")
+          svg.append("rect")
+            .attr("id", "bar")
             .attr("width", barscale(prod_of_countries))
             .attr("height", 30)
             .attr("x", 800)
             .attr("y", 100+x*(600/length))
             .style("fill", "white");
-          let rect2=svg.append("rect")
-            .attr("width", barscale(waste_of_countries))
-            .attr("height", 30)
-            .attr("x", 800)
-            .attr("y", 100+x*(600/length))
-            .style("fill", "red");
+          
       }
     }
   }
@@ -202,6 +193,8 @@ const ready = async () => {
       d3.selectAll(".clicked")
       .classed("clicked", false);
       redraw();
+      d3.selectAll('#bar')
+        
       d3.select(this)
       .classed("clicked", true)
       .attr("fill", colors.clicked);
