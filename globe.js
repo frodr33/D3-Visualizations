@@ -224,7 +224,7 @@ const ready = async () => {
       }
     })
     .on("mouseout", function(country) {
-			document.getElementById("country-percent").innerText = "Hover over a Country!";
+			document.getElementById("country-percent").innerText = '\u00a0';
       var c = d3.select(this);
       var name = countryMap.get(parseInt(country.id))
       if (c.classed("clicked")) {
@@ -291,7 +291,7 @@ var slider = d3.sliderHorizontal()
 
 var start = WIDTH/3 - sliderWidth/2;
 svg.append("g")
-.attr('transform', 'translate('+ start +',650)')
+.attr('transform', 'translate('+ start +',10)')
 .call(slider);
 
 /* Buttons */
