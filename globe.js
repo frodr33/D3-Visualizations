@@ -61,7 +61,7 @@ function addToCountryBank(country) {
 
 
   name_array.forEach(function(country) {addToCountryBank(country);});
-  
+
   function cropFunction (waste, production, cropid){
 			if (cropType !== null) {
 				document.getElementById(cropType).style.border= "solid transparent 5px";
@@ -75,7 +75,7 @@ function addToCountryBank(country) {
       for (x in name_array) {
           waste_of_countries=waste_current.filter(d=> d['Country']==name_array[x]);
           prod_of_countries=production_current.filter(d=> d['Country']==name_array[x]);
-          if (waste_of_countries.length >0) { 
+          if (waste_of_countries.length >0) {
           waste_of_countries=waste_of_countries[0].Value;
           prod_of_countries=prod_of_countries[0].Value;
           waste_of_countries=Number(waste_of_countries);
@@ -87,7 +87,7 @@ function addToCountryBank(country) {
             .attr("height", 20)
             .attr("x", 850)
             .attr("y", 50+((x+1)*7))
-            .style("fill", "white"); 
+            .style("fill", "white");
           svg.append("text")
             .attr("class", "graphcontent")
             .attr("x", 790)
@@ -96,7 +96,7 @@ function addToCountryBank(country) {
             .attr("dominant-baseline", "middle")
             .style("fill", "white")
             .style("font-size", "9px")
-            .text(name_array[x]) 
+            .text(name_array[x])
           } else {
             svg.append("text")
             .attr("class", "graphcontent")
@@ -113,7 +113,7 @@ function addToCountryBank(country) {
             .attr("y", 62+((x+1)*7))
             .style("fill", "white")
             .style("font-size", "12px")
-            .text('No data available') 
+            .text('No data available')
           }
     }
   }
@@ -163,7 +163,7 @@ function addToCountryBank(country) {
   })
   landUse[lastArea] = landUseInCountry
   /* Country color scale*/
-  colorScale = d3.scaleSequential(d3.interpolateGreens)
+  colorScale = d3.scaleSequential(d3.interpolateRdYlGn)
     .domain(landUseExtent)
 
   countries = topojson.feature(world, world.objects.countries).features;
@@ -215,13 +215,13 @@ function addToCountryBank(country) {
             .attr("y", 620)
             .style("fill", "white")
             .style("font-size", "12px")
-            .text('Percentage crop production that is wasted') 
-  
-  
+            .text('Percentage crop production that is wasted')
+
+
   document.getElementById('wheat').onclick = cropFunction(cereal_waste, cereal_production,'wheat')
   document.getElementById('sugar').onclick = cropFunction(sugar_waste, sugar_production,'sugar')
   document.getElementById('starch').onclick = cropFunction(starch_waste, starch_production,'starch')
-  
+
   countries.forEach((country) => {
     let id = parseInt(country.id);
     let name = countryMap.get(id);
@@ -244,7 +244,7 @@ function addToCountryBank(country) {
 					name_array.push(countryMap.get(id));
           addToCountryBank(countryMap.get(id));
           // console.log("hi asdf")
-      }  
+      }
 
     if (cropType=='wheat') {
     cropFunction(cereal_waste, cereal_production,'wheat')
@@ -285,8 +285,8 @@ function addToCountryBank(country) {
       } else {
         d3.select(this).attr("fill", landUse[name] && landUse[name][currentYear] ?  colorScale(landUse[name][currentYear]): "lightgray");
       }
-      
-      
+
+
     });
   })
   initSpin();
