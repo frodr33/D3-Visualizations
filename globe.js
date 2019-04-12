@@ -257,11 +257,11 @@ const ready = async () => {
   
   /* Bar graph Visualization */
   let xscale=d3.scaleLinear()
-  .domain([0, 30])
+  .domain([0, 50])
   .range([600, 900]);
   
   let barscale=d3.scaleLinear()
-  .domain([0, 30])
+  .domain([0, 50])
   .range([0, 300]);
   
   let yscale=d3.scaleBand()
@@ -298,6 +298,7 @@ const ready = async () => {
   countries.forEach((country) => {
     let id = parseInt(country.id);
     let name = countryMap.get(id);
+    console.log(landUse[name]); 
     svg.insert("path", ".graticule")
     .datum(country)
     .attr("fill", landUse[name] && landUse[name][currentYear] ?  colorScale(landUse[name][currentYear]): "lightgray")
