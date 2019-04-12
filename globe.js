@@ -210,6 +210,9 @@ const ready = async () => {
   /* Deserializing csv into landUse object */
   let lastArea = "Afghanistan";
   let landUseInCountry = {}
+  let russiaLandUsage = {}
+
+
   land.forEach((d, _) => {
     if (lastArea !== d.Area) {
       if (lastArea == "Venezuela (Bolivarian Republic of)") lastArea = "Venezuela, Bolivarian Republic of"
@@ -223,7 +226,12 @@ const ready = async () => {
       else if (lastArea == "Yugoslav SFR") lastArea = "Macedonia, the former Yugoslav Republic of" // There is also a North Macedonia lol
       else if (lastArea == "United Republic of Tanzania") lastArea = "Tanzania, United Republic of"
       
-      landUse[lastArea] = landUseInCountry
+      if (lastArea !== "Russian Federation") {
+        landUse[lastArea] = landUseInCountry
+      } else {
+        russiaLandUsage = landUseInCountry;
+      }
+
       if (lastArea == "Congo") landUse["Congo, the Democratic Republic of the"] = landUseInCountry
       if (lastArea == "Sudan") landUse["South Sudan"] = landUseInCountry
       landUseInCountry = {}
@@ -231,15 +239,19 @@ const ready = async () => {
     let val = parseFloat(d.Value)
     landUseExtent[0] = val < landUseExtent[0] ? val : landUseExtent[0]
     landUseExtent[1] = val > landUseExtent[1] ? val : landUseExtent[1]
-    landUseInCountry[d.Year] = val
+
+    if (d.Area === "USSR") {
+      russiaLandUsage[d.Year] = val
+    } else {
+      landUseInCountry[d.Year] = val
+    }
+
     lastArea = d.Area
   })
+  landUse["Russian Federation"] = russiaLandUsage;
   landUse[lastArea] = landUseInCountry
 
-  console.log("DEBUGGING");
-  console.log(landUse);
-  console.log(land)
-  /* Country color scale*/
+
   colorScale = d3.scaleSequential(d3.interpolateRdYlGn)
   .domain(landUseExtent)
   
