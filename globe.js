@@ -28,7 +28,6 @@ svg.append("path")
 .attr("class", "graticule")
 .attr("d", path);
 
-
 const ready = async () => {
   let world = await d3.json("datasets/world-110m.v1.json");
   let names = await d3.tsv("datasets/world-country-names.tsv")
@@ -40,90 +39,164 @@ const ready = async () => {
   let sugar_production= await d3.csv("datasets/Production_sugarcrops.csv")
   let starch_production= await d3.csv("datasets/Production_starchcrops.csv");
   let landUseExtent = [100, 0];
-
-  name_array=["United States", "Nigeria", "Paraguay", "United Kingdom", "India"]
-function addToCountryBank(country) {
-			let bank= document.getElementById('bank');
-			let slot= document.createElement("div");
-			slot.className= "countryslot";
-			slot.id= country;
-
-			let countrybutton= document.createElement("div");
-			countrybutton.className= "country";
-      countrybutton.onclick= function() {removeFromCountryBank(country);};
-      console.log(name_array);
-			let countrybuttonlabel= document.createElement("p");
-			countrybuttonlabel.innerHTML= country;
-
-			countrybutton.append(countrybuttonlabel);
-			slot.append(countrybutton);
-      bank.append(slot);
-};
-
-
+  window.cereal_waste = cereal_waste;
+  window.sugar_waste = sugar_waste;
+  window.starch_waste = starch_waste;
+  window.cereal_production = cereal_production;
+  window.sugar_production = sugar_production;
+  window.starch_production = starch_production;
+  
+  name_array=["United States of America", "Nigeria", "Paraguay", "United Kingdom", "India"]
+  function addToCountryBank(country) {
+    let bank= document.getElementById('bank');
+    let slot= document.createElement("div");
+    slot.className= "countryslot";
+    slot.id= country;
+    
+    let countrybutton= document.createElement("div");
+    countrybutton.className= "country";
+    countrybutton.onclick= function() {removeFromCountryBank(country);};
+    console.log(name_array);
+    let countrybuttonlabel= document.createElement("p");
+    countrybuttonlabel.innerHTML= country;
+    
+    countrybutton.append(countrybuttonlabel);
+    slot.append(countrybutton);
+    bank.append(slot);
+  };
+  
   name_array.forEach(function(country) {addToCountryBank(country);});
-
-  function cropFunction (waste, production, cropid){
-			if (cropType !== null) {
-				document.getElementById(cropType).style.border= "solid transparent 5px";
-			}
+  
+  
+  const cropFunctionVb = (waste, production, cropid) => {
+    return () => {
+      if (cropType !== null) {
+        document.getElementById(cropType).style.border= "solid transparent 5px";
+      }
       cropType=cropid;
-			console.log("item: "+cropType);
-			document.getElementById(cropType).style.border= "solid var(--cs-url) 5px";
+      console.log(production);
+      console.log(waste); 
+      console.log("item: "+cropType);
+      document.getElementById(cropType).style.border= "solid var(--cs-url) 5px";
       waste_current=waste.filter(d=> d['Year']==currentYear);
+      console.log(currentYear);
       production_current=production.filter(d=> d['Year']==currentYear);
       length=name_array.length;
+      d3.selectAll('.graphcontent')
+    .remove()
       for (x in name_array) {
-          waste_of_countries=waste_current.filter(d=> d['Country']==name_array[x]);
-          prod_of_countries=production_current.filter(d=> d['Country']==name_array[x]);
-          if (waste_of_countries.length >0) {
+        
+        waste_of_countries=waste_current.filter(d=> d['Country']==name_array[x]);
+        prod_of_countries=production_current.filter(d=> d['Country']==name_array[x]);
+        if (waste_of_countries.length >0) {
           waste_of_countries=waste_of_countries[0].Value;
           prod_of_countries=prod_of_countries[0].Value;
           waste_of_countries=Number(waste_of_countries);
           prod_of_countries=Number(prod_of_countries);
           console.log('HI')
           svg.append("rect")
-            .attr("class", "graphcontent")
-            .attr("width", barscale(100*waste_of_countries/prod_of_countries))
-            .attr("height", 20)
-            .attr("x", 850)
-            .attr("y", 50+((x+1)*7))
-            .style("fill", "white");
+          .attr("class", "graphcontent")
+          .attr("width", barscale(100*waste_of_countries/prod_of_countries))
+          .attr("height", 20)
+          .attr("x", 850)
+          .attr("y", 50+((x+1)*7))
+          .style("fill", "white");
           svg.append("text")
-            .attr("class", "graphcontent")
-            .attr("x", 790)
-            .attr("y", 62+((x+1)*7))
-            .attr("text-anchor", "middle" )
-            .attr("dominant-baseline", "middle")
-            .style("fill", "white")
-            .style("font-size", "9px")
-            .text(name_array[x])
-          } else {
-            svg.append("text")
-            .attr("class", "graphcontent")
-            .attr("x", 790)
-            .attr("y", 62+((x+1)*7))
-            .attr("text-anchor", "middle" )
-            .attr("dominant-baseline", "middle")
-            .style("fill", "white")
-            .style("font-size", "9px")
-            .text(name_array[x])
-            svg.append("text")
-            .attr("class", "graphcontent")
-            .attr("x", 870)
-            .attr("y", 62+((x+1)*7))
-            .style("fill", "white")
-            .style("font-size", "12px")
-            .text('No data available')
-          }
+          .attr("class", "graphcontent")
+          .attr("x", 790)
+          .attr("y", 62+((x+1)*7))
+          .attr("text-anchor", "middle" )
+          .attr("dominant-baseline", "middle")
+          .style("fill", "white")
+          .style("font-size", "9px")
+          .text(name_array[x])
+        } else {
+          svg.append("text")
+          .attr("class", "graphcontent")
+          .attr("x", 790)
+          .attr("y", 62+((x+1)*7))
+          .attr("text-anchor", "middle" )
+          .attr("dominant-baseline", "middle")
+          .style("fill", "white")
+          .style("font-size", "9px")
+          .text(name_array[x])
+          svg.append("text")
+          .attr("class", "graphcontent")
+          .attr("x", 870)
+          .attr("y", 62+((x+1)*7))
+          .style("fill", "white")
+          .style("font-size", "12px")
+          .text('No data available')
+        }
+      }
     }
   }
+  
+  var which_crop; 
+  function cropFunction (waste, production, cropid){
+    if (cropType != null) {
+      document.getElementById(cropType).style.border= "solid transparent 5px";
+    }
+    cropType=cropid;
+    which_crop=cropid; 
+    console.log("item: "+cropType);
+    document.getElementById(cropType).style.border= "solid var(--cs-url) 5px";
+    waste_current=waste.filter(d=> d['Year']==currentYear);
+    production_current=production.filter(d=> d['Year']==currentYear);
+    length=name_array.length;
+    for (x in name_array) {
+      waste_of_countries=waste_current.filter(d=> d['Country']==name_array[x]);
+      prod_of_countries=production_current.filter(d=> d['Country']==name_array[x]);
+      if (waste_of_countries.length >0) {
+        waste_of_countries=waste_of_countries[0].Value;
+        prod_of_countries=prod_of_countries[0].Value;
+        waste_of_countries=Number(waste_of_countries);
+        prod_of_countries=Number(prod_of_countries);
+        console.log('HI')
+        svg.append("rect")
+        .attr("class", "graphcontent")
+        .attr("width", barscale(100*waste_of_countries/prod_of_countries))
+        .attr("height", 20)
+        .attr("x", 850)
+        .attr("y", 50+((x+1)*7))
+        .style("fill", "white");
+        svg.append("text")
+        .attr("class", "graphcontent")
+        .attr("x", 790)
+        .attr("y", 62+((x+1)*7))
+        .attr("text-anchor", "middle" )
+        .attr("dominant-baseline", "middle")
+        .style("fill", "white")
+        .style("font-size", "9px")
+        .text(name_array[x])
+      } else {
+        svg.append("text")
+        .attr("class", "graphcontent")
+        .attr("x", 790)
+        .attr("y", 62+((x+1)*7))
+        .attr("text-anchor", "middle" )
+        .attr("dominant-baseline", "middle")
+        .style("fill", "white")
+        .style("font-size", "9px")
+        .text(name_array[x])
+        svg.append("text")
+        .attr("class", "graphcontent")
+        .attr("x", 870)
+        .attr("y", 62+((x+1)*7))
+        .style("fill", "white")
+        .style("font-size", "12px")
+        .text('No data available')
+      }
+    }
+  }
+  window.cropFunction = cropFunction;
   
   function removeFromCountryBank(country) {
     name_array.splice(name_array.indexOf(country), 1);
     (document.getElementById(country)).remove();
     d3.selectAll('.graphcontent')
     .remove()
+    console.log(which_crop)
     if (cropType=='wheat') {
       cropFunction(cereal_waste, cereal_production,'wheat')
     }
@@ -165,8 +238,8 @@ function addToCountryBank(country) {
   landUse[lastArea] = landUseInCountry
   /* Country color scale*/
   colorScale = d3.scaleSequential(d3.interpolateRdYlGn)
-    .domain(landUseExtent)
-
+  .domain(landUseExtent)
+  
   countries = topojson.feature(world, world.objects.countries).features;
   names.forEach((d) => {
     countryMap.set(parseInt(d["id"]), d["name"]);
@@ -184,11 +257,11 @@ function addToCountryBank(country) {
   
   /* Bar graph Visualization */
   let xscale=d3.scaleLinear()
-  .domain([0, 50])
+  .domain([0, 30])
   .range([600, 900]);
   
   let barscale=d3.scaleLinear()
-  .domain([0, 50])
+  .domain([0, 30])
   .range([0, 300]);
   
   let yscale=d3.scaleBand()
@@ -212,17 +285,16 @@ function addToCountryBank(country) {
   .call(y_axis);
   
   svg.append("text")
-            .attr("x", 875)
-            .attr("y", 620)
-            .style("fill", "white")
-            .style("font-size", "12px")
-            .text('Percentage crop production that is wasted')
-
-
-  document.getElementById('wheat').onclick = cropFunction(cereal_waste, cereal_production,'wheat')
-  document.getElementById('sugar').onclick = cropFunction(sugar_waste, sugar_production,'sugar')
-  document.getElementById('starch').onclick = cropFunction(starch_waste, starch_production,'starch')
-
+  .attr("x", 875)
+  .attr("y", 620)
+  .style("fill", "white")
+  .style("font-size", "12px")
+  .text('Percentage crop production that is wasted')
+  
+  document.getElementById('wheat').onclick = cropFunctionVb(cereal_waste, cereal_production,'wheat')
+  document.getElementById('sugar').onclick = cropFunctionVb(sugar_waste, sugar_production,'sugar')
+  document.getElementById('starch').onclick = cropFunctionVb(starch_waste, starch_production,'starch')
+  
   countries.forEach((country) => {
     let id = parseInt(country.id);
     let name = countryMap.get(id);
@@ -246,7 +318,7 @@ function addToCountryBank(country) {
         addToCountryBank(countryMap.get(id));
         // console.log("hi asdf")
       }  
-      
+      console.log(cropType)
       if (cropType=='wheat') {
         cropFunction(cereal_waste, cereal_production,'wheat')
       }
@@ -257,7 +329,6 @@ function addToCountryBank(country) {
         cropFunction(starch_waste, starch_production,'starch')
       }
     })
-    
     
     .on("mousemove", function(country) {
       var c = d3.select(this);
@@ -286,8 +357,8 @@ function addToCountryBank(country) {
       } else {
         d3.select(this).attr("fill", landUse[name] && landUse[name][currentYear] ?  colorScale(landUse[name][currentYear]): "lightgray");
       }
-
-
+      
+      
     });
   })
   initSpin();
@@ -344,6 +415,18 @@ var slider = d3.sliderHorizontal()
 .on('onchange', val => {
   currentYear = val.toString();
   redraw();
+  d3.selectAll('.graphcontent')
+  .remove()
+  console.log(cropType); 
+  if (cropType=='wheat') {
+    cropFunction(cereal_waste, cereal_production,'wheat')
+  }
+  if (cropType=='sugar') {
+    cropFunction(sugar_waste, sugar_production,'sugar')
+  }
+  if (cropType=='starch') {
+    cropFunction(starch_waste, starch_production,'starch')
+  }
 });
 
 var start = WIDTH/3 - sliderWidth/2;
@@ -356,29 +439,29 @@ svg.select("#pauseButton")
 .on("click", () => {stopSpinning();})
 
 svg.select("#playButton")
-  .on("click", () => {
-    rotating = true;
-    startSpinning();
-  })
+.on("click", () => {
+  rotating = true;
+  startSpinning();
+})
 
 svg.select("#lButton")
-  .on("mousedown", () => {
-    stopSpinning();
-    rotating = false;
-    direction = -1;
-    startSpinning();
-  })
-  .on("mouseup", () => {
-    stopSpinning();
-    direction = 1;
-  })
+.on("mousedown", () => {
+  stopSpinning();
+  rotating = false;
+  direction = -1;
+  startSpinning();
+})
+.on("mouseup", () => {
+  stopSpinning();
+  direction = 1;
+})
 
 svg.select("#rButton")
-  .on("mousedown", () => {
-    stopSpinning();
-    rotating = false;
-    startSpinning();
-  })
-  .on("mouseup", () => {
-    stopSpinning();
-  })
+.on("mousedown", () => {
+  stopSpinning();
+  rotating = false;
+  startSpinning();
+})
+.on("mouseup", () => {
+  stopSpinning();
+})

@@ -22,7 +22,7 @@ id	name
 56	Belgium
 60	Bermuda
 64	Bhutan
-68	Bolivia
+68	Bolivia, Plurinational State of
 70	Bosnia and Herzegovina
 72	Botswana
 74	Bouvet Island
@@ -53,7 +53,7 @@ id	name
 174	Comoros
 175	Mayotte
 178	Congo
-180	Congo
+180	Congo, the Democratic Republic of the
 184	Cook Islands
 188	Costa Rica
 191	Croatia
@@ -72,7 +72,7 @@ id	name
 233	Estonia
 234	Faroe Islands
 238	Falkland Islands (Malvinas)
-239	South Georgia/South Sandwich
+239	South Georgia and the South Sandwich Islands
 242	Fiji
 246	Finland
 248	Åland Islands
@@ -84,7 +84,7 @@ id	name
 266	Gabon
 268	Georgia
 270	Gambia
-275	Palestinian Territory
+275	Palestinian Territory, Occupied
 276	Germany
 288	Ghana
 292	Gibraltar
@@ -117,7 +117,7 @@ id	name
 398	Kazakhstan
 400	Jordan
 404	Kenya
-408	South Korea
+408	Korea, Democratic People's Republic of
 410	Korea, Republic of
 414	Kuwait
 417	Kyrgyzstan
@@ -167,8 +167,8 @@ id	name
 574	Norfolk Island
 578	Norway
 580	Northern Mariana Islands
-581	United States Outlying Islands
-583	Micronesia
+581	United States Minor Outlying Islands
+583	Micronesia, Federated States of
 584	Marshall Islands
 585	Palau
 586	Pakistan
@@ -189,7 +189,7 @@ id	name
 643	Russian Federation
 646	Rwanda
 652	Saint Barthélemy
-654	Saint Helena/Ascension/Tristan da Cunha
+654	Saint Helena, Ascension and Tristan da Cunha
 659	Saint Kitts and Nevis
 660	Anguilla
 662	Saint Lucia
@@ -230,23 +230,23 @@ id	name
 788	Tunisia
 792	Turkey
 795	Turkmenistan
-796	Turks and Caicos 
+796	Turks and Caicos Islands
 798	Tuvalu
 800	Uganda
 804	Ukraine
-807	Macedonia
+807	Macedonia, the former Yugoslav Republic of
 818	Egypt
 826	United Kingdom
 831	Guernsey
 832	Jersey
 833	Isle of Man
-834	Tanzani
-840	United States
+834	Tanzania, United Republic of
+840	United States of America
 850	Virgin Islands, U.S.
 854	Burkina Faso
 858	Uruguay
 860	Uzbekistan
-862	Venezuela
+862	Venezuela, Bolivarian Republic of
 876	Wallis and Futuna
 882	Samoa
 887	Yemen
