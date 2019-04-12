@@ -212,8 +212,7 @@ const ready = async () => {
   let landUseInCountry = {}
   land.forEach((d, _) => {
     if (lastArea !== d.Area) {
-      if (lastArea == "United States of America") lastArea = "United States"
-      else if (lastArea == "Venezuela (Bolivarian Republic of)") lastArea = "Venezuela, Bolivarian Republic of"
+      if (lastArea == "Venezuela (Bolivarian Republic of)") lastArea = "Venezuela, Bolivarian Republic of"
       else if (lastArea == "Czechia") lastArea = "Czech Republic"
       else if (lastArea == "Bolivia (Plurinational State of)") lastArea = "Bolivia, Plurinational State of"
       else if (lastArea == "C̫te d'Ivoire") lastArea = "Côte d'Ivoire"
