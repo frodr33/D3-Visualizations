@@ -32,11 +32,11 @@ const ready = async () => {
   let world = await d3.json("datasets/world-110m.v1.json");
   let names = await d3.tsv("datasets/world-country-names.tsv")
   let land = await d3.csv("datasets/landForAgri.csv")
-  let sugar_waste= await d3.csv("datasets/Loss_sugarcrops.csv")
+  let sugar_waste= await d3.csv("datasets/Loss_sugar.csv")
   let cereal_waste= await d3.csv("datasets/Loss_cerealcrops.csv")
   let starch_waste= await d3.csv("datasets/Loss_starchcrops.csv")
   let cereal_production= await d3.csv("datasets/Production_cerealcrops.csv")
-  let sugar_production= await d3.csv("datasets/Production_sugarcrops.csv")
+  let sugar_production= await d3.csv("datasets/Production_sugar.csv")
   let starch_production= await d3.csv("datasets/Production_starchcrops.csv");
   let landUseExtent = [100, 0];
   window.cereal_waste = cereal_waste;
@@ -56,7 +56,6 @@ const ready = async () => {
     let countrybutton= document.createElement("div");
     countrybutton.className= "country";
     countrybutton.onclick= function() {removeFromCountryBank(country);};
-    console.log(name_array);
     let countrybuttonlabel= document.createElement("p");
     countrybuttonlabel.innerHTML= country;
     
@@ -74,18 +73,13 @@ const ready = async () => {
         document.getElementById(cropType).style.border= "solid transparent 5px";
       }
       cropType=cropid;
-      console.log(production);
-      console.log(waste); 
-      console.log("item: "+cropType);
       document.getElementById(cropType).style.border= "solid var(--cs-url) 5px";
       waste_current=waste.filter(d=> d['Year']==currentYear);
-      console.log(currentYear);
       production_current=production.filter(d=> d['Year']==currentYear);
       length=name_array.length;
       d3.selectAll('.graphcontent')
     .remove()
       for (x in name_array) {
-        
         waste_of_countries=waste_current.filter(d=> d['Country']==name_array[x]);
         prod_of_countries=production_current.filter(d=> d['Country']==name_array[x]);
         if (waste_of_countries.length >0) {
@@ -93,7 +87,9 @@ const ready = async () => {
           prod_of_countries=prod_of_countries[0].Value;
           waste_of_countries=Number(waste_of_countries);
           prod_of_countries=Number(prod_of_countries);
-          console.log('HI')
+          string_percent=100*waste_of_countries/prod_of_countries; 
+          string_percent=(Math.round(string_percent*100)/100).toFixed(2)
+          string_percent=String(string_percent).concat('%')
           svg.append("rect")
           .attr("class", "graphcontent")
           .attr("width", barscale(100*waste_of_countries/prod_of_countries))
@@ -110,6 +106,13 @@ const ready = async () => {
           .style("fill", "white")
           .style("font-size", "9px")
           .text(name_array[x])
+          svg.append("text")
+          .attr("class", "graphcontent")
+          .attr("x", 780)
+          .attr("y", 85+((x+1)*7))
+          .style("fill", "white")
+          .style("font-size", "11px")
+          .text(string_percent)
         } else {
           svg.append("text")
           .attr("class", "graphcontent")
@@ -132,7 +135,7 @@ const ready = async () => {
     }
   }
   
-  var which_crop; 
+
   function cropFunction (waste, production, cropid){
     if (cropType != null) {
       document.getElementById(cropType).style.border= "solid transparent 5px";
@@ -152,7 +155,9 @@ const ready = async () => {
         prod_of_countries=prod_of_countries[0].Value;
         waste_of_countries=Number(waste_of_countries);
         prod_of_countries=Number(prod_of_countries);
-        console.log('HI')
+        string_percent=100*waste_of_countries/prod_of_countries; 
+        string_percent=(Math.round(string_percent*100)/100).toFixed(2)
+        string_percent=String(string_percent).concat('%')
         svg.append("rect")
         .attr("class", "graphcontent")
         .attr("width", barscale(100*waste_of_countries/prod_of_countries))
@@ -169,6 +174,13 @@ const ready = async () => {
         .style("fill", "white")
         .style("font-size", "9px")
         .text(name_array[x])
+        svg.append("text")
+        .attr("class", "graphcontent")
+        .attr("x", 780)
+        .attr("y", 85+((x+1)*7))
+        .style("fill", "white")
+        .style("font-size", "11px")
+        .text(string_percent)
       } else {
         svg.append("text")
         .attr("class", "graphcontent")
@@ -196,7 +208,6 @@ const ready = async () => {
     (document.getElementById(country)).remove();
     d3.selectAll('.graphcontent')
     .remove()
-    console.log(which_crop)
     if (cropType=='wheat') {
       cropFunction(cereal_waste, cereal_production,'wheat')
     }
@@ -293,6 +304,8 @@ const ready = async () => {
   .style("fill", "white")
   .style("font-size", "12px")
   .text('Percentage crop production that is wasted')
+
+  
   
   document.getElementById('wheat').onclick = cropFunctionVb(cereal_waste, cereal_production,'wheat')
   document.getElementById('sugar').onclick = cropFunctionVb(sugar_waste, sugar_production,'sugar')
@@ -301,7 +314,6 @@ const ready = async () => {
   countries.forEach((country) => {
     let id = parseInt(country.id);
     let name = countryMap.get(id);
-    console.log(landUse[name]); 
     svg.insert("path", ".graticule")
     .datum(country)
     .attr("fill", landUse[name] && landUse[name][currentYear] ?  colorScale(landUse[name][currentYear]): "lightgray")
