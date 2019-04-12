@@ -212,8 +212,7 @@ const ready = async () => {
   let landUseInCountry = {}
   land.forEach((d, _) => {
     if (lastArea !== d.Area) {
-      if (lastArea == "United States of America") lastArea = "United States"
-      else if (lastArea == "Venezuela (Bolivarian Republic of)") lastArea = "Venezuela, Bolivarian Republic of"
+      if (lastArea == "Venezuela (Bolivarian Republic of)") lastArea = "Venezuela, Bolivarian Republic of"
       else if (lastArea == "Czechia") lastArea = "Czech Republic"
       else if (lastArea == "Bolivia (Plurinational State of)") lastArea = "Bolivia, Plurinational State of"
       else if (lastArea == "C̫te d'Ivoire") lastArea = "Côte d'Ivoire"
@@ -236,6 +235,10 @@ const ready = async () => {
     lastArea = d.Area
   })
   landUse[lastArea] = landUseInCountry
+
+  console.log("DEBUGGING");
+  console.log(landUse);
+  console.log(land)
   /* Country color scale*/
   colorScale = d3.scaleSequential(d3.interpolateRdYlGn)
   .domain(landUseExtent)
@@ -399,7 +402,7 @@ var rotate = () => {
 };
 
 var dataTime = []
-for (var i = 1972; i <= 2016; i+=4) {
+for (var i = 1980; i <= 2010; i+=5) {
   dataTime.push(i);
 }
 
@@ -418,7 +421,7 @@ var slider = d3.sliderHorizontal()
   redraw();
   d3.selectAll('.graphcontent')
   .remove()
-  console.log(cropType); 
+  // console.log(cropType); 
   if (cropType=='wheat') {
     cropFunction(cereal_waste, cereal_production,'wheat')
   }
