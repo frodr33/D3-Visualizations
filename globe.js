@@ -11,7 +11,7 @@ let wasDragged = false;
 let timer;
 let countryMap = new Map();
 let colors = { clickable: 'green', hover: 'grey', clicked: "blue", clickhover: "darkblue" };
-let currentYear = 1970;
+let currentYear = 1980;
 let landUse = {}
 let colorScale;
 var cropType=null;
