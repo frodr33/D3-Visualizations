@@ -120,3 +120,7 @@ stroke-width: 1px;
 .references{
 text-align: center;
 }
+
+.slider .parameter-value text {
+	fill: white;
+}
