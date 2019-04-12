@@ -46,6 +46,7 @@ const ready = async () => {
   window.sugar_production = sugar_production;
   window.starch_production = starch_production;
   
+  // default countries set
   name_array=["United States of America", "Nigeria", "Paraguay", "United Kingdom", "India"]
   function addToCountryBank(country) {
     let bank= document.getElementById('bank');
@@ -66,7 +67,7 @@ const ready = async () => {
   
   name_array.forEach(function(country) {addToCountryBank(country);});
   
-  
+  // updatebargraph function in a variable
   const cropFunctionVb = (waste, production, cropid) => {
     return () => {
       if (cropType !== null) {
@@ -78,7 +79,7 @@ const ready = async () => {
       production_current=production.filter(d=> d['Year']==currentYear);
       length=name_array.length;
       d3.selectAll('.graphcontent')
-    .remove()
+      .remove()
       for (x in name_array) {
         waste_of_countries=waste_current.filter(d=> d['Country']==name_array[x]);
         prod_of_countries=production_current.filter(d=> d['Country']==name_array[x]);
@@ -135,7 +136,7 @@ const ready = async () => {
     }
   }
   
-
+  // update bar graph function, in function form
   function cropFunction (waste, production, cropid){
     if (cropType != null) {
       document.getElementById(cropType).style.border= "solid transparent 5px";
@@ -181,7 +182,7 @@ const ready = async () => {
         .style("fill", "white")
         .style("font-size", "11px")
         .text(string_percent)
-        } else {
+      } else {
         svg.append("text")
         .attr("class", "graphcontent")
         .attr("x", 790)
@@ -201,6 +202,7 @@ const ready = async () => {
       }
     }
   }
+  
   window.cropFunction = cropFunction;
   
   function removeFromCountryBank(country) {
@@ -222,8 +224,8 @@ const ready = async () => {
   let lastArea = "Afghanistan";
   let landUseInCountry = {}
   let russiaLandUsage = {}
-
-
+  
+  
   land.forEach((d, _) => {
     if (lastArea !== d.Area) {
       if (lastArea == "Venezuela (Bolivarian Republic of)") lastArea = "Venezuela, Bolivarian Republic of"
@@ -242,7 +244,7 @@ const ready = async () => {
       } else {
         russiaLandUsage = landUseInCountry;
       }
-
+      
       if (lastArea == "Congo") landUse["Congo, the Democratic Republic of the"] = landUseInCountry
       if (lastArea == "Sudan") landUse["South Sudan"] = landUseInCountry
       landUseInCountry = {}
@@ -250,19 +252,19 @@ const ready = async () => {
     let val = parseFloat(d.Value)
     landUseExtent[0] = val < landUseExtent[0] ? val : landUseExtent[0]
     landUseExtent[1] = val > landUseExtent[1] ? val : landUseExtent[1]
-
+    
     if (d.Area === "USSR") {
       russiaLandUsage[d.Year] = val
     } else {
       landUseInCountry[d.Year] = val
     }
-
+    
     lastArea = d.Area
   })
   landUse["Russian Federation"] = russiaLandUsage;
   landUse[lastArea] = landUseInCountry
-
-
+  
+  
   colorScale = d3.scaleSequential(d3.interpolateRdYlGn)
   .domain(landUseExtent)
   
@@ -316,7 +318,7 @@ const ready = async () => {
   .style("fill", "white")
   .style("font-size", "12px")
   .text('Percentage crop production that is wasted')
-
+  
   
   
   document.getElementById('wheat').onclick = cropFunctionVb(cereal_waste, cereal_production,'wheat')
@@ -445,7 +447,6 @@ var slider = d3.sliderHorizontal()
   redraw();
   d3.selectAll('.graphcontent')
   .remove()
-  // console.log(cropType); 
   if (cropType=='wheat') {
     cropFunction(cereal_waste, cereal_production,'wheat')
   }
