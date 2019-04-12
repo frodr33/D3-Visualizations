@@ -181,7 +181,7 @@ const ready = async () => {
         .style("fill", "white")
         .style("font-size", "11px")
         .text(string_percent)
-      } else {
+        } else {
         svg.append("text")
         .attr("class", "graphcontent")
         .attr("x", 790)
@@ -288,7 +288,7 @@ const ready = async () => {
   
   let barscale=d3.scaleLinear()
   .domain([0, 100])
-  .range([0, 300]);
+  .range([0, 400]);
   
   let yscale=d3.scaleBand()
   .domain([])
