@@ -272,11 +272,11 @@ const ready = async () => {
   
   /* Bar graph Visualization */
   let xscale=d3.scaleLinear()
-  .domain([0, 50])
-  .range([600, 900]);
+  .domain([0, 100])
+  .range([600, 1000]);
   
   let barscale=d3.scaleLinear()
-  .domain([0, 50])
+  .domain([0, 100])
   .range([0, 300]);
   
   let yscale=d3.scaleBand()
