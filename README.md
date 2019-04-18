@@ -1,9 +1,13 @@
-# Fire-Emblem
+# D3 Visualizations
+
+## Description
+For CS 3300 at Cornell University, we created two different visualizations displaying data obtained from `www.kaggle.com`. The first visualization is called Graduate Admissions. This visualization is broken up into a scatter plot showing the relationship between GPA/test scores and admittance into graduate schools. 
 
 ![screenshot](Demo-Images/toefl.png)
 
-## Description
-Fire-Emblem is a clone of the real game boy game Fire Emblem. Fire-Emblem is a turn based game where the user controlls several blue-colored 'Players'. The goal of the game is to kill the enemies without dying.
+The second part of this visualization was a [Sankey Diagram](https://github.com/d3/d3-sankey). We displayed how GRE and GPA scores affect admission into graduate schools through different paths in the sankey. We do this for three of the nation's top schools: Cornell, Berkeley, and Yale. We made two different sankey graphs for the GRE and GPA attributes. In the example below, we only show the GPA Sankey. 
+
+![screenshot](Demo-Images/sankey.png)
 
 ## How to install
 OCaml and Opam must be installed prior to installing this project. If OCaml and Opam are not installed then follow the
