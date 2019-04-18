@@ -1,0 +1,504 @@
+<head>
+  <script src="https://d3js.org/d3.v5.min.js"></script>
+  <!-- d3-sankey import -->
+  <script src="https://unpkg.com/d3-sankey@0"></script>
+</head>
+
+<body>
+  <style>
+    body {
+      font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+      background-color: rgb(211, 211, 211);
+    }
+
+    h1#about {
+      text-align: center;
+      margin-bottom: 5px;
+    }
+
+    p {
+      display: block;
+      padding-right: 750px;
+    }
+
+    div#vis1 {
+      text-align: center;
+      text-anchor: middle;
+      display: block;
+    }
+
+    div#vis2 {
+      text-align: center;
+      text-anchor: middle;
+      display: block;
+    }
+
+    div#vis3 {
+      text-align: center;
+      text-anchor: middle;
+      display: block;
+    }
+
+    .gridlines line {
+      stroke: #504E48;
+      stroke-width: 0.5;
+    }
+
+    .gridlines .domain {
+      stroke: none;
+    }
+
+    #rects {
+      border-radius: 25px;
+      padding: 20px;
+      /* stroke: black; */
+    }
+  </style>
+
+  <h1 id="about">United States Graduate School Admissions</h1>
+  <center><i>Manish Saha, Frank Rodriguez, Marcela Rey Rojas</i></center>
+  <br>
+  <div id="vis1About">
+    <h2>How do test scores and GPA affect admission chance for international students?</h2>
+    <p>
+      In this visualization, we show how standardized test scores and college GPA influence international students'
+      admission chance in American graduate schools. While the <a
+        href="https://www.kaptest.com/gre/what-is-the-gre">GRE</a> measures an applicant's overall readiness for
+      graduate-level coursework, the <a href="https://www.ets.org/toefl/ibt/about">TOEFL</a> tests their English
+      language ability. Chance of admit (ranging from ~0% to ~100%) is modeled with the size of each data point.
+      <br><br>
+      <i>Note: <a href="https://www.easycalculation.com/maths-dictionary/cgpa.html">CGPA</a> is the Cumulative Grade
+        Point Average. To convert to a percentage, multiply the CGPA by 9.5.<br>(e.g. 10 CGPA = 10 * 9.5 = 95%)</i>
+    </p>
+  </div>
+  <div id="vis1">
+  </div>
+  <br><br>
+  <div id="vis1About">
+    <h2>How do GRE scores and GPA affect admission for students in accredited U.S. universities?</h2>
+    <p>
+      In this sankey graph, we show how performance on the GRE and undergraduate GPA (4.0 scale) affect one's admission
+      to U.S. graduate schools. We show data from students that have applied to Cornell University, U.C. Berkeley, and
+      Yale University for graduate school. GRE scores have been separated by Top Scores, Competitive Scores, and
+      Average/Below Average Scores as determined by <a
+        href="https://www.kaptest.com/study/gre/whats-a-good-gre-score/">Kaplan</a>.
+    </p>
+    <div id="vis2">
+    </div>
+    <div id="vis3">
+    </div>
+
+    <script>
+      const requestData = async () => {
+
+        /******   FIRST VISUALIZATION   ******/
+        let universityData = await d3.csv('datasets/admissions.csv');
+        let WIDTH = 1050;
+        let HEIGHT = 700;
+        let margin = { top: 20, left: 70, bottom: 50, right: 100 };
+        let chartWidth = WIDTH - margin.left - margin.right;
+        let chartHeight = HEIGHT - margin.top - margin.bottom;
+
+        // cast string values to numbers
+        universityData.forEach(d => {
+          Object.keys(d).forEach(key => {
+            d[key] = Number(d[key]);
+            if (key === 'Chance of Admit')
+              d[key] = d[key] * 10;
+          });
+        });
+
+        // extract domains for relevant metrics
+        let TOEFLMinMax = d3.extent(universityData, d => d['TOEFL Score']);
+        let GREMinMax = d3.extent(universityData, d => d['GRE Score']);
+        // add padding for domains
+        TOEFLMinMax[0] -= 2;
+        TOEFLMinMax[1] += 2;
+        GREMinMax[0] -= 2;
+        GREMinMax[1] += 2;
+        const admitMinMax = d3.extent(universityData, d => d['Chance of Admit']);
+        const CGPAMinMax = d3.extent(universityData, d => d['CGPA']);
+
+        // SVG declaration
+        testScoreSVG = d3.select('div#vis1').append("svg")
+          .attr("width", WIDTH)
+          .attr("height", HEIGHT)
+          .attr("id", "testScoreSVG");
+
+        // scales
+        let xScale = d3.scaleLinear()
+          .domain(TOEFLMinMax)
+          .range([0, chartWidth])
+        let yScale = d3.scaleLinear()
+          .domain(GREMinMax)
+          .range([chartHeight, 0]);
+        let rScale = d3.scaleLinear()
+          .domain(admitMinMax)
+          .range([2, 12]);
+        let colorScale = d3.scaleSequential(d3.interpolateBlues)
+          .domain(CGPAMinMax)
+
+        // gridlines (horizontal gridlines, vertical gridlines)
+        let horizontalLines = d3.axisLeft(yScale).tickSize(-chartWidth - 10).ticks(10).tickFormat("");
+        testScoreSVG.append("g").attr("class", "y gridlines")
+          .attr("transform", "translate(" + (margin.left - 10) + "," + margin.top + ")")
+          .call(horizontalLines);
+        let verticalLines = d3.axisBottom(xScale).tickSize(-chartHeight - 10).ticks(12).tickFormat("");
+        testScoreSVG.append("g").attr("class", "x gridlines")
+          .attr("transform", "translate(" + margin.left + "," + (chartHeight + margin.top + 10) + ")")
+          .call(verticalLines);
+
+        // axes (y axis, x axis)
+        testScoreSVG.append("g")
+          .attr("transform", "translate(" + (margin.left - 10) + "," + margin.top + ")")
+          .attr("class", "axis")
+          .style("font-size", 12)
+          .call(d3.axisLeft(yScale).ticks(10));
+        testScoreSVG.append("g")
+          .attr("transform", "translate(" + margin.left + "," + (chartHeight + margin.top + 10) + ")")
+          .attr("class", "axis")
+          .style("font-size", 12)
+          .call(d3.axisBottom(xScale).ticks(12));
+
+        // axis labels
+        testScoreSVG.append("g")
+          .attr("transform", "translate(" + (margin.left / 3) + "," + (margin.top + chartHeight / 2) + ")")
+          .append("text")
+          .attr("transform", "rotate(-90)")
+          .text("GRE Score");
+        testScoreSVG.append("g")
+          .attr("transform", "translate(" + (margin.left + chartWidth / 2) + "," + (margin.top + chartHeight + margin.bottom) + ")")
+          .append("text")
+          .text("TOEFL Score");
+
+        // data points
+        let plot = testScoreSVG.append("g")
+          .attr("transform", "translate(" + (margin.left + 0.5) + "," + margin.top + ")");
+        universityData.forEach(d => {
+          circle = plot.append("circle")
+            .attr("cx", xScale(d["TOEFL Score"]))
+            .attr("cy", yScale(d["GRE Score"]))
+            .attr("r", rScale(d['Chance of Admit']))
+            .style("fill", colorScale(d["CGPA"]))
+            .attr("opacity", 0.8)
+        });
+
+        // linear gradient
+        // https://www.visualcinnamon.com/2016/05/smooth-color-legend-d3-svg-gradient.html reference
+        let gpaGradient = testScoreSVG.append('defs')
+          .append('linearGradient')
+          .attr('id', 'gpaGradient')
+          .attr("x1", "0%")
+          .attr("y1", "0%")
+          .attr("x2", "0%")
+          .attr("y2", "100%");
+        gpaGradient.append('stop')
+          .attr("stop-color", d3.schemeBlues[9][8])
+          .attr('offset', '0%');
+        gpaGradient.append('stop')
+          .attr("stop-color", d3.schemeBlues[9][0])
+          .attr('offset', '100%');
+        // Use the gradient to set the shape fill
+        plot.append('g')
+          .attr('transform', 'translate(' + (chartWidth + 10) + ',0)')
+          .append('rect')
+          .attr("x", 0)
+          .attr("y", 0)
+          .attr('width', margin.right / 3)
+          .attr('height', chartHeight)
+          .style('fill', 'url(#gpaGradient');
+
+        // linear gradient axis + label
+        let gpaScale = d3.scaleLinear()
+          .domain(colorScale.domain())
+          .range([chartHeight, 0]);
+        testScoreSVG.append("g")
+          .attr("transform", "translate(" + (margin.left + chartWidth + margin.right / 2) + "," + margin.top + ")")
+          .attr("class", "axis")
+          .style("font-size", 12)
+          .call(d3.axisRight(gpaScale).ticks(12));
+        testScoreSVG.append("g")
+          .attr("transform", "translate(" + (1.5 * margin.left + chartWidth + margin.right / 2) + "," + (margin.top + chartHeight / 2) + ")")
+          .append("text")
+          .attr("transform", "rotate(90)")
+          .text("CGPA");
+
+
+        /******   SECOND VISUALIZATION   ******/
+        WIDTH = 1350;
+        HEIGHT = 850;
+        graduateDecisions = d3.select('div#vis2').append("svg")
+          .attr("width", WIDTH)
+          .attr("height", HEIGHT)
+          .attr("id", "gpaAdmissions");
+        greDecisions = d3.select('div#vis2').append("svg")
+          .attr("width", WIDTH)
+          .attr("height", HEIGHT)
+          .attr("id", "greAdmissions");
+
+        let gradData = await d3.csv('datasets/gradAdmissions.csv');
+        // filter data and discretize decision values
+        gradData = gradData.filter(d => (d.Accepted === 'Accepted' || d.Accepted === 'Rejected') && d.GPA <= 4.0);
+        gradData.forEach(d => {
+          d["GPA"] = Number(d["GPA"]);
+          d["GRE_Verbal"] = Number(d["GRE_Verbal"]);
+          d["GRE_Quant"] = Number(d["GRE_Quant"]);
+          d["GRE_Writing"] = Number(d["GRE_Writing"])
+          d['GRE'] = d.GRE_Verbal + d.GRE_Quant + d.GRE_Writing;
+        });
+
+        chartWidth = WIDTH - margin.left - margin.right;
+        chartHeight = HEIGHT - margin.top - margin.bottom;
+
+        // populate nodes
+        let names = [
+          "Applicants",
+          "Berkeley",
+          "Cornell",
+          "Yale",
+          "3.9 - 4.0",
+          "3.7 - 3.9",
+          "< 3.7",
+          "Accepted",
+          "Rejected",
+        ];
+
+        let greNames = [
+          "Applicants",
+          "Berkeley",
+          'Cornell',
+          "Yale",
+          "Top Scores",
+          "Competitive Scores",
+          "Average/Below Average Scores",
+          "Accepted",
+          "Rejected",
+        ];
+
+        let nodes = [];
+        let greNodes = [];
+        let indexMapping = new Map(names.map((d, i) => [d, i]));
+        let indexMappingGre = new Map(greNames.map((d, i) => [d, i]));
+        names.forEach(d => nodes.push({ name: d }));
+        greNames.forEach(d => greNodes.push({ name: d }));
+
+        // populate links
+        links = [];
+        greLinks = [];
+        gradData.forEach((d, i) => {
+          let college = d.College;
+          let cFill = college === "Cornell" ? "rgb(179, 27, 27)" :
+            college === "Berkeley" ? "#FDB515" : "rgb(15, 77, 146)";
+          let score = d.GRE;
+          // verbal + quantitative + writing
+          let top = 163 + 165 + 5;
+          let competitive = 158 + 159 + 4.5;
+          let goodEnough = 152 + 153 + 4;
+          let gre =
+            score >= top ? 'Top Scores'
+              : score >= competitive ? 'Competitive Scores'
+                : 'Average/Below Average Scores'
+          let decision = d.Accepted;
+          let gpa;
+          if (d.GPA < 3.7) gpa = '< 3.7';
+          else if (d.GPA < 3.9) gpa = '3.7 - 3.9';
+          else if (d.GPA <= 4) gpa = '3.9 - 4.0';
+
+          if (indexMapping.get(gpa) == null) {
+            console.log(d.GPA);
+            console.log(gpa);
+            console.log(indexMapping.get(gpa));
+          }
+
+          // create links to connect nodes for gpa Sankey
+          greLinks.push(
+            {
+              source: indexMappingGre.get("Applicants"),
+              target: indexMappingGre.get(college),
+              value: 1,
+              color: "gray",
+            },
+            {
+              source: indexMappingGre.get(college),
+              target: indexMappingGre.get(gre),
+              value: 1,
+              color: cFill,
+            },
+            {
+              source: indexMappingGre.get(gre),
+              target: indexMappingGre.get(decision),
+              value: 1,
+              color: cFill,
+            },
+          );
+
+          links.push(
+            {
+              source: indexMapping.get("Applicants"),
+              target: indexMapping.get(college),
+              value: 1,
+              color: "gray",
+            },
+            {
+              source: indexMapping.get(college),
+              target: indexMapping.get(gpa),
+              value: 1,
+              color: cFill,
+            },
+            {
+              source: indexMapping.get(gpa),
+              target: indexMapping.get(decision),
+              value: 1,
+              color: cFill,
+            },
+          );
+
+        });
+
+        // initialize sankey with dimensions
+        const sankey = d3.sankey()
+          .nodeWidth(36)
+          .nodePadding(80)
+          .extent([[0, 15], [1300, 750]])
+          .iterations(0);
+
+        let graph = sankey({ nodes, links });
+        nodes = greNodes;
+        links = greLinks;
+        let grp = sankey({ nodes, links });
+        var applicantNode = graph.nodes[0]
+        var applicantNodeGre = grp.nodes[0]
+        var displacement = 79;
+        applicantNode.y0 += displacement;
+        applicantNode.y1 += displacement;
+        applicantNodeGre.y0 += displacement;
+        applicantNodeGre.y1 += displacement;
+
+        // Manually move and color nodes
+        const updateNodes = (link) => {
+          if (link.source.name === "Applicants") {
+            link.y0 += displacement;
+          }
+          if (link.target.name === "Yale") link.color = "url(#blueGradient)";
+          else if (link.target.name === "Berkeley") link.color = "url(#yellowGradient)";
+          else if (link.target.name === "Cornell") link.color = "url(#redGradient)";
+        }
+        graph.links.forEach(updateNodes);
+        grp.links.forEach(updateNodes);
+
+        // Add nodes for gpa sankey
+        const drawSankey = (svg, sankeyGraph) => {
+          svg.append("g")
+            .attr("id", "rects")
+            .selectAll("rect")
+            .data(sankeyGraph.nodes)
+            .join("rect")
+            .attr("x", d => d.x0)
+            .attr("y", d => d.y0)
+            .attr("height", d => (d.y1 - d.y0))
+            .attr("width", d => d.x1 - d.x0)
+            .attr("fill", d =>
+              d.name === "Cornell" ? "rgb(179, 27, 27)"
+                : d.name === "Berkeley" ? "#FDB515"
+                  : d.name === "Yale" ? "rgb(15, 77, 146)" : "gray")
+
+          svg.append("g")
+            .attr("fill", "none")
+            .selectAll("path")
+            .data(sankeyGraph.links)
+            .join("path")
+            .attr("stroke", d => d.color)
+            .attr("opacity", 0.3)
+            .attr("d", d3.sankeyLinkHorizontal());
+        }
+        drawSankey(graduateDecisions, graph);
+        drawSankey(greDecisions, grp)
+
+        // apply gradients to links
+        let redGradient = graduateDecisions.append('defs')
+          .append('linearGradient')
+          .attr('id', 'redGradient')
+        redGradient.append('stop')
+          .attr("stop-color", "gray")
+          .attr('offset', '30%');
+        redGradient.append('stop')
+          .attr("stop-color", "rgb(179, 27, 27)")
+          .attr('offset', '100%');
+        let yellowGradient = graduateDecisions.append('defs')
+          .append('linearGradient')
+          .attr('id', 'yellowGradient')
+        yellowGradient.append('stop')
+          .attr("stop-color", "gray")
+          .attr('offset', '30%');
+        yellowGradient.append('stop')
+          .attr("stop-color", "#FDB515")
+          .attr('offset', '100%');
+        let blueGradient = graduateDecisions.append('defs')
+          .append('linearGradient')
+          .attr('id', 'blueGradient')
+        blueGradient.append('stop')
+          .attr("stop-color", "gray")
+          .attr('offset', '30%');
+        blueGradient.append('stop')
+          .attr("stop-color", "rgb(15, 77, 146)")
+          .attr('offset', '100%');
+
+        // add node descriptions
+        const addNodeDescriptions = (svg, sankeyGraph) => {
+          svg.append("g")
+            .selectAll("text")
+            .data(sankeyGraph.nodes)
+            .join("text")
+            .attr("x", d => d.x0 < WIDTH / 2 ? d.x1 + 6 : d.x0 - 6)
+            .attr("y", d => (d.y1 + d.y0) / 2)
+            .attr("text-anchor", d => d.x0 < WIDTH / 2 ? "start" : "end")
+            .text(d => d.name);
+        }
+        addNodeDescriptions(graduateDecisions, graph);
+        addNodeDescriptions(greDecisions, grp);
+
+        // add node size
+        const addNodeSize = (svg, sankeyGraph) => {
+          const offset = (d) => {
+            return (d.name === "Applicants") ? 35 : 30;
+          }
+          svg.append("g")
+            .selectAll("text")
+            .data(sankeyGraph.nodes)
+            .join("text")
+            .attr("x", d => d.x0 < WIDTH / 2 ? d.x1 - offset(d) : d.x0 + 30)
+            .attr("y", d => d.y0 + 15)
+            .attr("text-anchor", d => d.x0 < WIDTH / 2 ? "start" : "end")
+            .text(d => (d.name === "Accepted" || d.name === "Rejected") ?
+              d.targetLinks.length : d.sourceLinks.length);
+        }
+        addNodeSize(graduateDecisions, graph)
+        addNodeSize(greDecisions, grp)
+
+        // add labels
+        const addLabels = (svg, greVgpa) => {
+          let label = svg.append("g")
+            .attr("transform", "translate(340,790)")
+            .style("font-size", 18)
+            .style('font-weight', 'bold');
+          label.append("g")
+            .attr("transform", "translate(90,0)")
+            .append('text')
+            .text("Graduate School");
+          label.append("g")
+            .attr("transform", "translate(520,0)")
+            .append("text")
+            .text(greVgpa);
+          label.append("g")
+            .attr("transform", "translate(925,0)")
+            .append("text")
+            .text("Decision");
+        }
+        addLabels(graduateDecisions, "GPA");
+        addLabels(greDecisions, "GRE");
+      }
+
+      // visualize
+      requestData();
+    </script>
+</body>
