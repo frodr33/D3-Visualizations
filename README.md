@@ -15,22 +15,20 @@ The second part of this visualization was a [Sankey Diagram](https://github.com/
 ## World Crop Production
 This visualization involved several dynamic components, as opposed to Graduate Admissions which was completely static. In this project, the user picks a crop item, either Cereal, Sugar, or Starchy crops.
 
-![screenshot](Demo-Images/crop.png)
+![screenshot](Demo-Images/crops.png)
 
 Then, the user can pick various countries from a globe. The globe was inspried by an [observable article](https://observablehq.com/@d3/versor-dragging). We used a sequential color scale on the globe to represent land usage. Specifically, green countries have high land usage (~70%) and red countries have low land usage (<10%). There are pause, play, left, and right rotation buttons on the globe. Additionally, there is a year slider which shows the change in land usage dynamically over time. After picking several countries and a crop, we display the countries on a vertical bar graph where the length of the bar corresponds to the percentage of crop production that is wasted
 
 ![screenshot](Demo-Images/globe.png)
 
-## How to install
-OCaml and Opam must be installed prior to installing this project. If OCaml and Opam are not installed then follow the
-tutorial at `http://www.cs.cornell.edu/courses/cs3110/2018sp/install.html`
+## How to setup
+There are no hard dependencies for this project, however a software that is able to serve files will be neeeded. For this purpose, we use python. 
 
-If Ocaml and Opam are installed, then do the following steps:
-	1. Clone the repository
-	2. Enter `opam install js_of_ocaml js_of_ocaml-ocamlbuild js_of_ocaml-camlp4 js_of_ocaml-lwt` in terminal/command line
-	3. In the terminal/command line enter `make`
-	4. Click on `index.html` inside the repository directory
-	5. A window in your default browser should open and fire-emblem should play automatically! (Click on the screen if nothing is happening)
+Steps
+	1. Download Python
+	2. In Terminal enter `cd Graduate-Admissions' or `cd World-Crop-Production`
+    3. In Terminal enter `python -m http.server`
+    4. Navigate to localhost:5000 in browser
 
 ## How to Play
 For best playing experience, use Google Chrome
